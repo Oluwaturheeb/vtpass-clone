@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">vtpass</string>
+    <string name="app_name">VTpass</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">nLF8j2RXYQyHDlV2N37ywQon7YufumagdIPM-</string>
 </resources>
