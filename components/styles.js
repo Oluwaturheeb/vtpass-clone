@@ -118,6 +118,7 @@ const rules = {
   posAbs: {
     position: 'absolute',
   },
+  inputHolder: { marginBottom: 16, width: '100%' },
 };
 
 export default StyleSheet.create(rules);

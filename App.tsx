@@ -17,10 +17,14 @@ import {
 } from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import styles, { other, pry } from './components/styles';
+import { UserProvider, useUser } from './components/lib/context';
 
 // Screens only
 import Welcome from './components/Welcome';
 import Home from './components/Home';
+import Auth from './components/Auth';
+import ListVariation from './components/ListVariation';
+import Details from './components/Details';
 // import Services from './components/services/index';
 // import Airtime from './components/Airtime';
 // import TransactionDetails from './components/TransactionDetails';
@@ -54,7 +58,7 @@ const App = () => {
                 />
                 {routeName == 'Home' && (
                   <Image
-                    source={require('./components/assets/vtTrans.png')}
+                    source={require('./components/assets/vtpass1.png')}
                     resizeMode="contain"
                     style={{ width: 100, height: 30 }}
                   />
@@ -84,28 +88,32 @@ const App = () => {
                 <Text
                   variant="titleMedium"
                   style={{ color: MD2Colors.white + 'ff' }}>
-                  {props.options.title}
+                  {props.route.params.title != undefined
+                    ? props.route.params.title
+                    : props.options.title}
                 </Text>
               </View>
-              <View style={[styles.frow, styles.fVertCenter]}>
-                <IconButton
-                  icon="magnify"
-                  onPress={() => props.navigation.navigate('Logs')}
-                  iconColor={MD2Colors.blue500}
-                  style={{ marginVertical: 10 }}
-                />
-                <IconButton
-                  icon="bell"
-                  iconColor={MD2Colors.blue500}
-                  style={{ marginVertical: 10 }}
-                />
-                <IconButton
-                  icon="menu"
-                  onPress={navRef.current.openDrawer}
-                  iconColor={MD2Colors.blue500}
-                  style={{ marginVertical: 10 }}
-                />
-              </View>
+              {routeName != 'Auth' && (
+                <View style={[styles.frow, styles.fVertCenter]}>
+                  <IconButton
+                    icon="magnify"
+                    onPress={() => props.navigation.navigate('Logs')}
+                    iconColor={MD2Colors.white}
+                    style={{ marginVertical: 10 }}
+                  />
+                  <IconButton
+                    icon="bell"
+                    iconColor={MD2Colors.white}
+                    style={{ marginVertical: 10 }}
+                  />
+                  <IconButton
+                    icon="menu"
+                    onPress={navRef.current.openDrawer}
+                    iconColor={MD2Colors.white}
+                    style={{ marginVertical: 10 }}
+                  />
+                </View>
+              )}
             </View>
           )}
         </View>
@@ -115,88 +123,39 @@ const App = () => {
 
   const NavDrawer = () => {
     const nav: any = useNavigation();
-    let { user, setUser, setId } = {
-      user: {},
-      setUser: () => {},
-      setId: () => {},
-    };
+    let { user, setUser, setId } = useUser();
+
     return (
       <LinearGradient
         colors={[pry, other]}
         style={{ position: 'relative', height: '100%' }}>
-        {user?.photo && (
-          <View>
-            <View>
+        <View>
+          <Image
+            source={require('./components/assets/vtpass1.png')}
+            resizeMode="contain"
+            style={{ width: '100%', height: 50, marginVertical: 10 }}
+          />
+          <TouchableRipple
+            rippleColor={pry}
+            onPress={() => {
+              nav.navigate('Home');
+              navRef.current.closeDrawer();
+            }}>
+            <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
+              <IconButton
+                style={{ marginVertical: -10 }}
+                iconColor={MD2Colors.white}
+                icon="cash-fast"
+              />
+              <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                Pay
+              </Text>
+            </View>
+          </TouchableRipple>
+          {user?.id ? (
+            <>
               <TouchableRipple
-                // rippleColor={}
-                onPress={() => {
-                  nav.navigate('Home');
-                  navRef.current.closeDrawer();
-                }}>
-                <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
-                  <IconButton
-                    style={{ marginVertical: -10 }}
-                    // iconColor={MD2Colors.red500}
-                    icon="home"
-                  />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.red500 }}>
-                    Home
-                  </Text>
-                </View>
-              </TouchableRipple>
-              <TouchableRipple
-                rippleColor={MD2Colors.red500 + '44'}
-                onPress={() => {
-                  nav.navigate('Settings');
-                  navRef.current.closeDrawer();
-                }}>
-                <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
-                  <IconButton
-                    iconColor={MD2Colors.red500}
-                    icon="account-cog"
-                    style={{ marginVertical: -10 }}
-                  />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.red500 }}>
-                    Account Settings
-                  </Text>
-                </View>
-              </TouchableRipple>
-              <TouchableRipple
-                rippleColor={MD2Colors.red500 + '44'}
-                onPress={() => {
-                  nav.navigate('Beneficiary');
-                  navRef.current.closeDrawer();
-                }}>
-                <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
-                  <IconButton
-                    style={{ marginVertical: -10 }}
-                    iconColor={MD2Colors.red500}
-                    icon="account-group"
-                  />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.red500 }}>
-                    My Beneficiary
-                  </Text>
-                </View>
-              </TouchableRipple>
-              <TouchableRipple
-                rippleColor={MD2Colors.red500 + '44'}
-                onPress={() => {
-                  nav.navigate('Logs');
-                  navRef.current.closeDrawer();
-                }}>
-                <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
-                  <IconButton
-                    style={{ marginVertical: -10 }}
-                    iconColor={MD2Colors.red500}
-                    icon="script-text-outline"
-                  />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.red500 }}>
-                    Trasactions History
-                  </Text>
-                </View>
-              </TouchableRipple>
-              <TouchableRipple
-                rippleColor={MD2Colors.red500 + '44'}
+                rippleColor={MD2Colors.white + '44'}
                 onPress={() => {
                   nav.navigate('Admin');
                   navRef.current.closeDrawer();
@@ -204,16 +163,16 @@ const App = () => {
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
                     style={{ marginVertical: -10 }}
-                    iconColor={MD2Colors.red500}
-                    icon="account-lock"
+                    iconColor={MD2Colors.white}
+                    icon="wallet"
                   />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.red500 }}>
-                    Admin Panel
+                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                    Load Wallet
                   </Text>
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                rippleColor={MD2Colors.red500 + '44'}
+                rippleColor={MD2Colors.white + '44'}
                 onPress={() => {
                   nav.navigate('Stats', { stats: 1 });
                   navRef.current.closeDrawer();
@@ -221,16 +180,50 @@ const App = () => {
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
                     style={{ marginVertical: -10 }}
-                    iconColor={MD2Colors.red500}
-                    icon="chart-bar"
+                    iconColor={MD2Colors.white}
+                    icon="script-text-outline"
                   />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.red500 }}>
-                    Statistics
+                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                    Transactions
+                  </Text>
+                </View>
+              </TouchableRipple>
+              {/* <TouchableRipple
+                rippleColor={MD2Colors.white + '44'}
+                onPress={() => {
+                  nav.navigate('Stats', { stats: 1 });
+                  navRef.current.closeDrawer();
+                }}>
+                <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
+                  <IconButton
+                    style={{ marginVertical: -10 }}
+                    iconColor={MD2Colors.white}
+                    icon="script-text-outline"
+                  />
+                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                    Transactions
+                  </Text>
+                </View>
+              </TouchableRipple> */}
+              <TouchableRipple
+                rippleColor={MD2Colors.white + '44'}
+                onPress={() => {
+                  nav.navigate('Auth', { type: 'Login' });
+                  navRef.current.closeDrawer();
+                }}>
+                <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
+                  <IconButton
+                    iconColor={MD2Colors.white}
+                    icon="account-cog"
+                    style={{ marginVertical: -10 }}
+                  />
+                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                    Settings
                   </Text>
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                rippleColor={MD2Colors.red500 + '44'}
+                rippleColor={MD2Colors.white + '44'}
                 onPress={async () => {
                   await AsyncStorage.removeItem('id');
                   setId('');
@@ -241,59 +234,118 @@ const App = () => {
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
                     style={{ marginVertical: -10 }}
-                    iconColor={MD2Colors.red500}
-                    icon="key-remove"
+                    iconColor={MD2Colors.white}
+                    icon="logout"
                   />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.red500 }}>
+                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
                     Logout
                   </Text>
                 </View>
               </TouchableRipple>
+            </>
+          ) : (
+            <>
+              <TouchableRipple
+                rippleColor={MD2Colors.white + '44'}
+                onPress={() => {
+                  nav.navigate('Auth', { type: 'Login' });
+                  navRef.current.closeDrawer();
+                }}>
+                <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
+                  <IconButton
+                    iconColor={MD2Colors.white}
+                    icon="login"
+                    style={{ marginVertical: -10 }}
+                  />
+                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                    Login
+                  </Text>
+                </View>
+              </TouchableRipple>
+              <TouchableRipple
+                rippleColor={MD2Colors.white + '44'}
+                onPress={() => {
+                  nav.navigate('Auth', { type: 'Create Account' });
+                  navRef.current.closeDrawer();
+                }}>
+                <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
+                  <IconButton
+                    style={{ marginVertical: -10 }}
+                    iconColor={MD2Colors.white}
+                    icon="account-plus"
+                  />
+                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                    Register
+                  </Text>
+                </View>
+              </TouchableRipple>
+            </>
+          )}
+          <TouchableRipple
+            rippleColor={MD2Colors.white + '44'}
+            onPress={() => {
+              nav.navigate('Logs');
+              navRef.current.closeDrawer();
+            }}>
+            <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
+              <IconButton
+                style={{ marginVertical: -10 }}
+                iconColor={MD2Colors.white}
+                icon="help-circle"
+              />
+              <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                Help
+              </Text>
             </View>
-          </View>
-        )}
+          </TouchableRipple>
+        </View>
       </LinearGradient>
     );
   };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      {/* <UserProvider> */}
-      <NavigationContainer>
-        <DrawerLayout
-          drawerWidth={240}
-          drawerPosition="left"
-          useNativeAnimations={true}
-          drawerType="front"
-          minSwipeDistance={20}
-          renderNavigationView={() => <NavDrawer />}
-          drawerBackgroundColor={MD2Colors.white}
-          ref={navRef}>
-          <Stack.Navigator
-            screenOptions={{
-              header: (props: any) => <Headers props={props} />,
-            }}>
-            <Stack.Screen
-              name="Welcome"
-              component={Welcome}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Home"
-              component={Home}
-              options={{ headerShown: true }}
-            />
-            {/* <Stack.Screen
-              name="Services"
-              component={Services}
-              options={{ title: 'Services' }}
-            />
-            <Stack.Screen
-              name="Airtime"
-              component={Airtime}
-              options={{ title: 'Airtime' }}
-            />
-            <Stack.Screen
+      <UserProvider>
+        <NavigationContainer>
+          <DrawerLayout
+            drawerWidth={240}
+            drawerPosition="left"
+            useNativeAnimations={true}
+            drawerType="front"
+            minSwipeDistance={20}
+            renderNavigationView={() => <NavDrawer />}
+            drawerBackgroundColor={MD2Colors.white}
+            ref={navRef}>
+            <Stack.Navigator
+              screenOptions={{
+                header: (props: any) => <Headers props={props} />,
+              }}>
+              <Stack.Screen
+                name="Welcome"
+                component={Welcome}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Home"
+                component={Home}
+                options={{ headerShown: true }}
+              />
+              <Stack.Screen
+                name="Auth"
+                component={Auth}
+                options={{ headerShown: true }}
+              />
+              <Stack.Screen
+                name="Variations"
+                component={ListVariation}
+                options={{ title: '???' }}
+              />
+              <Stack.Screen
+                name="Details"
+                component={Details}
+                options={{ title: 'Airtime VTU' }}
+              />
+              {/* <Stack.Screen
               name="TransactionDetails"
               component={TransactionDetails}
               options={{ title: 'Transaction Details' }}
@@ -338,10 +390,10 @@ const App = () => {
               component={Beneficiary}
               options={{ title: 'Beneficiaries' }}
             /> */}
-          </Stack.Navigator>
-        </DrawerLayout>
-      </NavigationContainer>
-      {/* </UserProvider> */}
+            </Stack.Navigator>
+          </DrawerLayout>
+        </NavigationContainer>
+      </UserProvider>
     </GestureHandlerRootView>
   );
 };

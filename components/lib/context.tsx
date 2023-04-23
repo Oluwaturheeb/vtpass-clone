@@ -1,16 +1,19 @@
-import React, {createContext, useState, useContext, useEffect} from 'react';
-import {users} from './firestore';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {UserSchema} from '../schema';
+// import {users} from './firestore';
+// import {UserSchema} from '../schema';
 
 const User = createContext({});
 const useUser: Function = () => useContext(User);
 
-const UserProvider = ({children}: {children: any}) => {
-  let [user, setUser] = useState(UserSchema);
-  let [id, setId] = useState('');
+const UserProvider = ({ children }: { children: any }) => {
+  let [user, setUser] = useState({});
+  let [id, setId] = useState({
+    id: '',
+    token: 'amRhbGk3NjE2dnRsa1JUY3NqfC18OTAxOTgy',
+  });
 
-  useEffect(() => {
+  /* useEffect(() => {
     const subscriber = (async () => {
       let appId = await AsyncStorage.getItem('id');
       setId(appId);
@@ -21,10 +24,12 @@ const UserProvider = ({children}: {children: any}) => {
 
     // Stop listening for updates when no longer required
     return () => subscriber();
-  }, []);
+  }, []); */
   return (
-    <User.Provider value={{user, setUser, id, setId}}>{children}</User.Provider>
+    <User.Provider value={{ user, setUser, id, setId }}>
+      {children}
+    </User.Provider>
   );
 };
 
-export {useUser, UserProvider};
+export { useUser, UserProvider };

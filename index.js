@@ -7,45 +7,46 @@ import {
   configureFonts,
   MD2LightTheme,
 } from 'react-native-paper';
+import { pry } from './components/styles';
 
 const font = {
   titleSmall: {
-    fontFamily: 'Alegreya-Regular',
+    fontFamily: 'serif',
     fontSize: 14,
     fontWeight: '500',
     letterSpacing: 0.1,
     lineHeight: 20,
   },
   titleMedium: {
-    fontFamily: 'Alegreya-Regular',
+    fontFamily: 'serif',
     fontSize: 16,
     fontWeight: '500',
     letterSpacing: 0.15,
     lineHeight: 24,
   },
   titleLarge: {
-    fontFamily: 'Alegreya-Regular',
+    fontFamily: 'serif',
     fontSize: 22,
     fontWeight: '400',
     letterSpacing: 0,
     lineHeight: 40,
   },
   bodySmall: {
-    fontFamily: 'Alegreya-Regular',
-    fontSize: 12,
+    fontFamily: 'serif',
+    fontSize: 10,
     fontWeight: '400',
   },
   bodyMedium: {
-    fontFamily: 'Alegreya-Regular',
+    fontFamily: 'serif',
     fontSize: 14,
     fontWeight: '400',
   },
   bodyLarge: {
-    fontFamily: 'Alegreya-Regular',
+    fontFamily: 'serif',
     fontSize: 16,
     fontWeight: '400',
   },
-  default: 'Alegreya-Regular',
+  default: 'serif',
 };
 const theme = {
   ...MD2LightTheme,
@@ -53,8 +54,8 @@ const theme = {
   roundness: 5,
   colors: {
     ...MD2LightTheme.colors,
-    primary: 'red',
-    text: 'red',
+    primary: pry,
+    text: pry,
   },
 };
 
