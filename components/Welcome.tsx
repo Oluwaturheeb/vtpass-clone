@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
 import styles, { other, pry } from './styles';
-import request from './lib/axios';
 import { Button, MD2Colors } from 'react-native-paper';
 import { StatusBar } from 'react-native';
+import { getService } from './lib/requests';
 
 const Welcome = ({ navigation }: { navigation: any }) => {
   useEffect(() => {
     (async () => {
       try {
-        const services = await request.get('/entry-point');
-        setTimeout(() => navigation.push('Home', services.data), 0);
+        let serv = await getService();
+        setTimeout(() => navigation.push('Home', serv), 0);
       } catch (e) {
         console.log(e);
       }
@@ -58,6 +58,7 @@ const Welcome = ({ navigation }: { navigation: any }) => {
             Create Account
           </Button>
           <Button
+            onPress={() => navigation.navigate('Home')}
             compact={false}
             textColor={MD2Colors.red600}
             style={{

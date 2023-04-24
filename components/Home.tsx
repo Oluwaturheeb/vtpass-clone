@@ -1,14 +1,17 @@
 import React, { useEffect } from 'react';
-// import request from './lib/axios';
 import { Button, Card, IconButton, MD2Colors, Text } from 'react-native-paper';
 import { CommonActions } from '@react-navigation/native';
-// import { FlatList } from 'react-native-gesture-handler';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import { View, StyleSheet } from 'react-native';
 import styles, { pry, other } from './styles';
 import BottomNav from './BottomNav';
+import { useUser } from './lib/context';
 
 const Home = ({ navigation, route }: { navigation: any; route: any }) => {
   const services: Services = route.params;
+  const {user} = useUser();
+  console.log(user);
+  
 
   // reset the navigation state
   useEffect(() => {

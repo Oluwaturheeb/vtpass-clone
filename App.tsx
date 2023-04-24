@@ -124,6 +124,7 @@ const App = () => {
   const NavDrawer = () => {
     const nav: any = useNavigation();
     let { user, setUser, setId } = useUser();
+    console.log(user);
 
     return (
       <LinearGradient
@@ -248,7 +249,7 @@ const App = () => {
               <TouchableRipple
                 rippleColor={MD2Colors.white + '44'}
                 onPress={() => {
-                  nav.navigate('Auth', { type: 'Login' });
+                  nav.navigate('Auth', { title: 'Login' });
                   navRef.current.closeDrawer();
                 }}>
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
@@ -265,7 +266,7 @@ const App = () => {
               <TouchableRipple
                 rippleColor={MD2Colors.white + '44'}
                 onPress={() => {
-                  nav.navigate('Auth', { type: 'Create Account' });
+                  nav.navigate('Auth', { title: 'Create Account' });
                   navRef.current.closeDrawer();
                 }}>
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
