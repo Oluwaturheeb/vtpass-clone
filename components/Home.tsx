@@ -5,18 +5,24 @@ import { FlatList } from 'react-native-gesture-handler';
 import { View, StyleSheet } from 'react-native';
 import styles, { pry, other } from './styles';
 import BottomNav from './BottomNav';
-import { useUser } from './lib/context';
+import { registerDevice } from './lib/requests';
+import { str } from './lib/helper';
 
 const Home = ({ navigation, route }: { navigation: any; route: any }) => {
   const services: Services = route.params;
-  const {user} = useUser();
-  console.log(user);
-  
 
   // reset the navigation state
   useEffect(() => {
     navigation.dispatch((state: any) => {
-      const routes = state.routes.filter((r: any) => r.name !== 'Welcome');
+      const routes = state.routes.filter((r: any) => { 
+        if (r.name === 'Welcome') {
+          return false;
+        } else if (r.name === 'Auth') {
+          return false;
+        } else {
+          return r;
+        }
+      });
       return CommonActions.reset({
         ...state,
         routes,

@@ -12,6 +12,7 @@ import styles, { other } from './styles';
 import { useUser } from './lib/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getService, postAuth } from './lib/requests';
+import request from './lib/axios';
 
 const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
   const { setId, setUser } = useUser();
@@ -44,15 +45,22 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
         }
 
         let response = await postAuth(url, data);
+        request.defaults.params['devicekey'] = response.token;
         setUser(response);
-        setId(response.c_id);
+        setId({ id: response.c_id, token: response.s_token });
         setMsg({
           msg: response.errors
             ? 'Invalid credentials!'
             : 'Authenticaton successful!',
           status: response.errors ? false : true,
         });
-        await AsyncStorage.setItem('user', response.data.c_id);
+        await AsyncStorage.setItem(
+          'id',
+          JSON.stringify({
+            id: response.c_id,
+            token: response.s_token,
+          }),
+        );
       }
       setInput({ ...input, loading: false });
     } catch (e) {

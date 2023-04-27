@@ -10,7 +10,7 @@ import {
 } from 'react-native-paper';
 import styles, { other, pry } from './styles';
 import filter from 'lodash.filter';
-import { Image, View } from 'react-native';
+import { View } from 'react-native';
 
 const ListVariation = ({
   navigation,
@@ -25,7 +25,12 @@ const ListVariation = ({
   let variationList: ServiceExtraVariation = params.variationList;
 
   // state
-  const [data, setData] = useState({
+  const [data, setData] = useState<{
+    variation: ServiceExtra;
+    variationList: ServiceExtraVariation;
+    filter: any;
+    key: string;
+  }>({
     variation,
     variationList: variationList,
     filter: [],
@@ -38,11 +43,6 @@ const ListVariation = ({
   });
   const [toggleVar, setToggleVar] = useState(false);
 
-  // useEffect(() => {
-  //   setData({ ...data, variationList: variationList });
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [toggleVar]);
-
   const ServiceList = ({ item }: { item: ServiceExtra }) => {
     let check = item.name.includes('VTU');
     return (
@@ -50,21 +50,15 @@ const ListVariation = ({
         style={{ marginBottom: 10 }}
         onPress={() => {
           if (check) {
-            navigation.navigate('Details', { info: item });
+            navigation.navigate('Details', {
+              selectedItem: { ...item },
+            });
           } else {
             setToggleVar(true);
             setData({ ...data, variationList: item.variations });
             setSelected({
               ...selected,
-              selectedItem: {
-                name: item.name,
-                img: item.image.replace(
-                  'https://localhost:8888/vtpassstager4',
-                  'http://10.0.2.16:8080',
-                ),
-                min: item.minimium_amount,
-                max: item.maximum_amount,
-              },
+              selectedItem: { ...item },
             });
           }
         }}>
@@ -78,16 +72,13 @@ const ListVariation = ({
           <View style={[styles.frow, styles.fVertCenter]}>
             <Avatar.Image
               source={{
-                uri: item.image.replace(
-                  'https://localhost:8888/vtpassstager4',
-                  'http://10.0.2.16:8080',
-                ),
+                uri: item.image.replace('https', 'http'),
               }}
-              size={48}
+              size={36}
             />
             <Text
-              variant="bodyLarge"
-              style={{ fontWeight: 'bold', color: pry, marginLeft: 20 }}>
+              variant="bodyMedium"
+              style={{ fontWeight: 'bold', color: pry, marginLeft: 12 }}>
               {item.name}
             </Text>
           </View>
@@ -95,6 +86,7 @@ const ListVariation = ({
             icon="chevron-right"
             underlayColor={pry}
             iconColor={other}
+            style={{ marginVertical: -10 }}
           />
         </Card.Content>
       </Card>
@@ -107,8 +99,10 @@ const ListVariation = ({
         style={{ marginBottom: 10, shadowColor: other }}
         onPress={() =>
           navigation.navigate('Details', {
-            ...route.params,
-            selected,
+            title: selected.selectedItem.name,
+            ...selected,
+            selectedVar: item,
+            productId: variation.product_id,
           })
         }>
         <Card.Content
@@ -121,14 +115,14 @@ const ListVariation = ({
           <View style={[styles.frow, styles.fVertCenter, { width: '70%' }]}>
             <Avatar.Image
               source={{
-                uri: selected.selectedItem.img,
+                uri: selected.selectedItem.image.replace('https', 'http'),
               }}
-              size={48}
+              size={36}
             />
             <Text
               textBreakStrategy="simple"
-              variant="bodyLarge"
-              style={{ fontWeight: 'bold', color: pry, marginLeft: 20 }}>
+              variant="bodySmall"
+              style={{ fontWeight: 'bold', color: pry, marginLeft: 12 }}>
               {item.variation}
             </Text>
           </View>
@@ -152,12 +146,22 @@ const ListVariation = ({
           {toggleVar && (
             <View
               style={[styles.frow, styles.fVertCenter, { marginBottom: 10 }]}>
-              <Avatar.Image source={{ uri: selected.selectedItem.img }} />
-              <Text
-                variant="headlineMedium"
-                style={{ fontWeight: 'bold', color: other, marginLeft: 20 }}>
-                {selected.selectedItem.name}
-              </Text>
+              <Avatar.Image
+                source={{ uri: selected.selectedItem.image.replace('https', 'http') }}
+                size={42}
+              />
+              <View>
+                <Text
+                  variant="bodyLarge"
+                  style={{ fontWeight: 'bold', color: other, marginLeft: 12 }}>
+                  {selected.selectedItem.name}
+                </Text>
+                <Text
+                  variant="bodySmall"
+                  style={{ marginLeft: 12, color: other + 'aa' }}>
+                  {selected.selectedItem.name} - Get instant Top up
+                </Text>
+              </View>
             </View>
           )}
           <TextInput
@@ -172,34 +176,17 @@ const ListVariation = ({
             onChangeText={(text: string) => {
               let searchResult;
               if (!toggleVar) {
-                searchResult = filter(data.variation, (item: ServiceExtra) =>
+                searchResult = filter(data.variation, (item: any) =>
                   item.name.toLocaleLowerCase().includes(text),
                 );
               } else {
                 searchResult = filter(
                   data.variationList.variations,
-                  (item: DataVariation) => item.amount.toString().includes(text) ||
-                  item.variation.toLocaleLowerCase().includes(text),
+                  (item: any) =>
+                    item.amount.toString().includes(text) ||
+                    item.variation.toLocaleLowerCase().includes(text),
                 );
               }
-
-              /* let searchResult = filter(
-                data.variation,
-                (item: ServiceExtra) => {
-                  if (item.variations) {
-                    if (
-                      item.variations.amount?.includes(text) ||
-                      item.name.toLocaleLowerCase().includes(text)
-                    ) {
-                      return true;
-                    }
-                  } else {
-                    if (item.name.toLocaleLowerCase().includes(text)) {
-                      return item;
-                    }
-                  }
-                },
-              ); */
               setData({ ...data, filter: searchResult, key: text });
             }}
             style={{

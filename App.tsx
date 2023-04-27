@@ -3,7 +3,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CodePush from 'react-native-code-push';
-import { Alert, Image, View } from 'react-native';
+import { Alert, Image, StatusBar, View } from 'react-native';
 // import {UserSchema} from './components/schema';
 import {
   DrawerLayout,
@@ -25,9 +25,9 @@ import Home from './components/Home';
 import Auth from './components/Auth';
 import ListVariation from './components/ListVariation';
 import Details from './components/Details';
+import TransactionDetails from './components/TransactionDetails';
 // import Services from './components/services/index';
 // import Airtime from './components/Airtime';
-// import TransactionDetails from './components/TransactionDetails';
 // import {money} from './components/lib/firestore';
 // import {UserProvider, useUser} from './components/lib/context';
 // import Logs from './components/Logs';
@@ -123,8 +123,12 @@ const App = () => {
 
   const NavDrawer = () => {
     const nav: any = useNavigation();
-    let { user, setUser, setId } = useUser();
-    console.log(user);
+    let {
+      user,
+      setUser,
+      setId,
+      id: { id },
+    } = useUser();
 
     return (
       <LinearGradient
@@ -153,7 +157,7 @@ const App = () => {
               </Text>
             </View>
           </TouchableRipple>
-          {user?.id ? (
+          {id ? (
             <>
               <TouchableRipple
                 rippleColor={MD2Colors.white + '44'}
@@ -306,6 +310,7 @@ const App = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <StatusBar backgroundColor={pry} />
       <UserProvider>
         <NavigationContainer>
           <DrawerLayout
@@ -346,12 +351,12 @@ const App = () => {
                 component={Details}
                 options={{ title: 'Airtime VTU' }}
               />
-              {/* <Stack.Screen
-              name="TransactionDetails"
-              component={TransactionDetails}
-              options={{ title: 'Transaction Details' }}
-            />
-            <Stack.Screen
+              <Stack.Screen
+                name="TransactionDetails"
+                component={TransactionDetails}
+                options={{ title: 'Transaction Details' }}
+              />
+            {/* <Stack.Screen
               name="Logs"
               component={Logs}
               options={{

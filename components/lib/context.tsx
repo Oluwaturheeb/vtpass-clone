@@ -1,5 +1,13 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useLayoutEffect,
+} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import request from './axios';
+import { registerDevice } from './requests';
+import { str } from './helper';
 // import {users} from './firestore';
 // import {UserSchema} from '../schema';
 
@@ -8,10 +16,34 @@ const useUser: Function = () => useContext(User);
 
 const UserProvider = ({ children }: { children: any }) => {
   let [user, setUser] = useState({});
-  let [id, setId] = useState({
-    id: '',
-    token: 'amRhbGk3NjE2dnRsa1JUY3NqfC18OTAxOTgy',
-  });
+  let [id, setId] = useState({ id: '', token: '', deviceId: '' });
+
+  useLayoutEffect(() => {
+    (async () => {
+      let appId = await AsyncStorage.getItem('id');
+      if (appId) {
+        let id = JSON.parse(appId);
+        setId(id);
+        request.defaults.params['devicekey'] = id.token;
+      } else {
+        let res = await registerDevice(str(100, false));
+        // set the default token
+        request.defaults.params.devicekey = id.token;
+        // set the store
+        setId({ ...id, token: res.device_key, deviceId: res.device_id });
+        // save the token
+        await AsyncStorage.setItem(
+          'id',
+          JSON.stringify({
+            ...id,
+            token: res.device_key,
+            deviceId: res.device_id,
+          }),
+        );
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* useEffect(() => {
     const subscriber = (async () => {
