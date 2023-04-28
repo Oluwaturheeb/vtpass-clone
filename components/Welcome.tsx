@@ -14,31 +14,36 @@ import { useUser } from './lib/context';
 import Animated, { SlideInDown } from 'react-native-reanimated';
 
 const Welcome = ({ navigation }: { navigation: any }) => {
-  const { id } = useUser();
+  const { id, setHomeData } = useUser();
   const [show, setShow] = useState(false);
+  const [service, setService] = useState();
 
   useEffect(() => {
-    if (id?.token) {
-      setShow(false);
-      (async () => {
+    (async () => {
+      let serv = await getService();
+
+      if (id?.id) {
+        setShow(false);
+        // get permission to read contact
         await PermissionsAndroid.request('android.permission.READ_CONTACTS');
         try {
-          let serv = await getService();
           if (serv.code == 'success') {
+            setHomeData(serv);
             setTimeout(() => navigation.push('Home', serv), 0);
           } else {
             Alert.alert(
-              'Vtpass',
+              'Vtpass error',
               'Something went wrong, kindly reopen the app!',
             );
           }
         } catch (e) {
           Alert.alert('Vtpass', 'Something went wrong, kindly reopen the app!');
         }
-      })();
-    } else {
-      setTimeout(() => setShow(true), 3000);
-    }
+      } else {
+        setService(serv);
+        setShow(true);
+      }
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -51,7 +56,7 @@ const Welcome = ({ navigation }: { navigation: any }) => {
         style={{ width: '100%', height: '100%', padding: 10 }}>
         {show && (
           <Animated.View
-            entering={SlideInDown.duration(1000)}
+            entering={SlideInDown.duration(1000).delay(2000)}
             style={{
               width: '100%',
               height: '100%',
@@ -59,7 +64,9 @@ const Welcome = ({ navigation }: { navigation: any }) => {
               padding: 10,
             }}>
             <Button
-              onPress={() => navigation.navigate('Auth', { title: 'Login' })}
+              onPress={() =>
+                navigation.navigate('Auth', { title: 'Login', id })
+              }
               compact={false}
               textColor={MD2Colors.white}
               style={{
@@ -71,7 +78,7 @@ const Welcome = ({ navigation }: { navigation: any }) => {
             </Button>
             <Button
               onPress={() =>
-                navigation.navigate('Auth', { title: 'Create Account' })
+                navigation.navigate('Auth', { title: 'Create Account', id })
               }
               compact={false}
               mode="outlined"
@@ -84,7 +91,7 @@ const Welcome = ({ navigation }: { navigation: any }) => {
               Create Account
             </Button>
             <Button
-              onPress={() => navigation.navigate('Home')}
+              onPress={() => navigation.navigate('Home', service)}
               compact={false}
               textColor={MD2Colors.red600}
               style={{

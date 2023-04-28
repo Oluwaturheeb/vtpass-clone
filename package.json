@@ -36,6 +36,7 @@
     "react-native": "0.71.7",
     "react-native-biometrics": "^3.0.1",
     "react-native-code-push": "^7.1.0",
+    "react-native-gesture-bottom-sheet": "^1.1.0",
     "react-native-gesture-handler": "^2.9.0",
     "react-native-linear-gradient": "^2.6.2",
     "react-native-paper": "^5.1.3",

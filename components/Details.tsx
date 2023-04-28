@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { Avatar, Button, MD2Colors, Text, TextInput } from 'react-native-paper';
 import styles, { other, pry } from './styles';
 import {
@@ -7,12 +7,13 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ContactPhoneSelection,
 } from 'react-native-select-contact';
-import { initTrans, userBalance } from './lib/requests';
+import { initTrans } from './lib/requests';
 import { useUser } from './lib/context';
 import { ScrollView } from 'react-native-gesture-handler';
+import { money } from './lib/axios';
 
 const Details = ({ route, navigation }: { navigation: any; route: any }) => {
-  const { id } = useUser();
+  const { id, user } = useUser();
   const param = route.params;
   const [form, setForm] = useState({
     phone_number: '',
@@ -25,7 +26,6 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
         : param.selectedVar?.amount
       : '',
     quantity: 1,
-    // decode: '',
     unique_element: '',
   });
 
@@ -45,10 +45,8 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
     },
   });
 
-  // console.log(JSON.stringify(param.selectedItem.serviceID, '', 2));
-
   const selectContact = async () => {
-    let { selectedPhone, contact }: ContactPhoneSelection | null =
+    let { selectedPhone, contact }: ContactPhoneSelection | any =
       await selectContactPhone();
 
     setForm({
@@ -146,7 +144,10 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                           ...error,
                           biller: true,
                           main: true,
-                          msg: { ...error.msg, biller: 'Invalid SmartCard number' },
+                          msg: {
+                            ...error.msg,
+                            biller: 'Invalid SmartCard number',
+                          },
                         });
                       } else {
                         setError({
@@ -179,7 +180,9 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                 keyboardType="number-pad"
                 placeholderTextColor={other + '66'}
                 value={form.phone_number}
-                onChangeText={(e: string) => setForm({ ...form, phone_number: e })}
+                onChangeText={(e: string) =>
+                  setForm({ ...form, phone_number: e })
+                }
                 right={
                   <TextInput.Icon
                     onPress={selectContact}
@@ -235,7 +238,8 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                     icon="email"
                     iconColor={MD2Colors.grey200}
                     style={{
-                      backgroundColor: form.email != '' ? pry + 'cc' : pry + '33',
+                      backgroundColor:
+                        form.email != '' ? pry + 'cc' : pry + '33',
                       borderRadius: 5,
                     }}
                     size={26}
@@ -275,13 +279,16 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                   keyboardType="number-pad"
                   placeholderTextColor={other + '66'}
                   value={form.quantity}
-                  onChangeText={(e: string) => setForm({ ...form, quantity: e })}
+                  onChangeText={(e: string) =>
+                    setForm({ ...form, quantity: e })
+                  }
                   right={
                     <TextInput.Icon
                       icon="numeric"
                       iconColor={MD2Colors.grey200}
                       style={{
-                        backgroundColor: form.email != '' ? pry + 'cc' : pry + '33',
+                        backgroundColor:
+                          form.email != '' ? pry + 'cc' : pry + '33',
                         borderRadius: 5,
                       }}
                       size={26}
@@ -315,12 +322,17 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                 />
               </View>
             )}
-            <View style={css.boxBorder}>
+            <View style={error.amount ? css.borderError : css.boxBorder}>
               <Text variant="bodySmall" style={css.text}>
                 Amount
               </Text>
+              {error.amount && (
+                <Text variant="bodySmall" style={css.textError}>
+                  {error.msg.amount}
+                </Text>
+              )}
               <TextInput
-                placeholder="08012345678"
+                placeholder={form.amount}
                 keyboardType="number-pad"
                 placeholderTextColor={other + '66'}
                 value={form.amount}
@@ -330,7 +342,8 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                     icon="cash-fast"
                     iconColor={MD2Colors.grey200}
                     style={{
-                      backgroundColor: form.amount != '' ? pry + 'cc' : pry + '33',
+                      backgroundColor:
+                        form.amount != '' ? pry + 'cc' : pry + '33',
                       borderRadius: 5,
                     }}
                     size={26}
@@ -341,17 +354,51 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                 underlineColor="#00000000"
                 activeUnderlineColor="#00000000"
                 selectionColor={other}
-                style={{ backgroundColor: '#00000000' }}
+                style={{ backgroundColor: '#00000000', borderBottomWidth: 0 }}
                 disabled={
-                  param.selectedVar?.amount == 0 || param.selectedVar?.amount == ''
+                  param.selectedVar?.amount == 0 ||
+                  param.selectedVar?.amount == '' ||
+                  param.selectedVar == undefined
                     ? false
                     : true
                 }
+                onEndEditing={() => {
+                  if (
+                    Number(form.amount) <
+                    Number(param.selectedItem.minimium_amount)
+                  ) {
+                    setError({
+                      ...error,
+                      amount: true,
+                      msg: {
+                        ...error.msg,
+                        amount:
+                          'Below minimum amount of ' +
+                          money(param.selectedItem.minimium_amount),
+                      },
+                    });
+                  } else if (
+                    Number(param.selectedItem.maximum_amount) <
+                    Number(form.amount)
+                  ) {
+                    setError({
+                      ...error,
+                      amount: true,
+                      msg: {
+                        ...error.msg,
+                        amount:
+                          'Exceed maximum amount of ' +
+                          money(param.selectedItem.maximum_amount),
+                      },
+                    });
+                  } else {
+                    setError({ ...error, amount: false });
+                  }
+                }}
               />
             </View>
             <Button
               onPress={async () => {
-                // console.log(param.selectedVar.identifier, id);
                 let trans = await initTrans(param.selectedItem.product_id, {
                   ...form,
                   identifier: param.selectedItem.serviceID,
@@ -361,7 +408,10 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                 console.log(trans);
 
                 if (trans.status == 'success') {
-                  navigation.navigate('TransactionDetails', { ...param, trans });
+                  navigation.navigate('TransactionDetails', {
+                    ...param,
+                    trans,
+                  });
                 } else {
                   false;
                 }

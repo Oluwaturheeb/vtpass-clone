@@ -11,8 +11,7 @@ import {
 import styles, { other } from './styles';
 import { useUser } from './lib/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getService, postAuth } from './lib/requests';
-import request from './lib/axios';
+import { postAuth } from './lib/requests';
 
 const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
   const { setId, setUser } = useUser();
@@ -23,20 +22,20 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
     loading: false,
   });
   const [msg, setMsg] = useState({ msg: '', status: false });
-  const type = route.params.title;
+  const { id, title } = route.params;
 
   const authenticate = async () => {
     setInput({ ...input, loading: true });
     try {
       if (!input.email?.trim()) {
         setMsg({ ...msg, msg: 'Email field is required!' });
-      } else if (type != 'Login' && !input.phone) {
+      } else if (title != 'Login' && !input.phone) {
         setMsg({ ...msg, msg: 'Phone field is required!' });
       } else if (!input.password?.trim()) {
         setMsg({ ...msg, msg: 'Password field is required!' });
       } else {
         let url, data;
-        if (type == 'Login') {
+        if (title == 'Login') {
           url = '/auth';
           data = { username: input.email, password: input.password };
         } else {
@@ -45,9 +44,9 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
         }
 
         let response = await postAuth(url, data);
-        request.defaults.params['devicekey'] = response.token;
+
         setUser(response);
-        setId({ id: response.c_id, token: response.s_token });
+        setId({ ...id, id: response.c_id, userToken: response.s_token });
         setMsg({
           msg: response.errors
             ? 'Invalid credentials!'
@@ -57,8 +56,9 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
         await AsyncStorage.setItem(
           'id',
           JSON.stringify({
+            ...id,
             id: response.c_id,
-            token: response.s_token,
+            userToken: response.s_token,
           }),
         );
       }
@@ -66,7 +66,6 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
     } catch (e) {
       setMsg({ ...msg, msg: 'Something went wrong, contact support!' });
       setInput({ ...input, loading: false });
-      console.log(e);
     }
   };
 
@@ -74,7 +73,7 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
     (async () => {
       setTimeout(() => setMsg({ ...msg, msg: '' }), 5000);
       if (msg.status) {
-        navigation.navigate('Home', await getService());
+        navigation.navigate('Home', route.params);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,12 +86,12 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
           Email {route.params.title != 'Register' && 'or Phone number'}
         </Text>
         <Input
-          placeholder={type == 'Login' ? 'Email or Phone number' : 'Email'}
+          placeholder={title == 'Login' ? 'Email or Phone number' : 'Email'}
           state={(e: string) => setInput({ ...input, email: e })}
           value={input.email}
         />
       </View>
-      {type != 'Login' && (
+      {title != 'Login' && (
         <View style={styles.inputHolder}>
           <Text variant="bodySmall" style={{ alignSelf: 'flex-start' }}>
             Phone Number
@@ -128,10 +127,10 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
           textColor={MD2Colors.red600}
           onPress={() =>
             navigation.navigate('Auth', {
-              title: type == 'Login' ? 'Create Account' : 'Login',
+              title: title == 'Login' ? 'Create Account' : 'Login',
             })
           }>
-          {type == 'Login' ? 'Register' : 'Login'}
+          {title == 'Login' ? 'Register' : 'Login'}
         </Button>
       </View>
       {input.loading ? (
@@ -148,11 +147,11 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
           buttonColor={other}
           textColor={MD2Colors.white}
           style={{ width: '100%', borderRadius: 5 }}>
-          {type}
+          {title}
         </Button>
       )}
 
-      {type == 'Login' && (
+      {title == 'Login' && (
         <View style={[styles.inputHolder, styles.fVertCenter]}>
           <Text
             variant="bodyMedium"

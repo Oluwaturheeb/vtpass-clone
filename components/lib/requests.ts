@@ -11,8 +11,8 @@ export const postAuth = async (url: string, payload: object) => {
   return res.data;
 };
 
-export const userBalance = async () => {
-  let res = await request.post('/get-wallet-balance');
+export const userBalance = async (token: string) => {
+  let res = await request.post('/get-wallet-balance', { user_token: token });
   return res.data;
 };
 
@@ -30,5 +30,10 @@ export const registerDevice = async (token: string) => {
     entryKey: encode('jdali7616vtlkRTcsj|-|' + token),
   });
 
+  return res.data;
+};
+
+export const fetchUser = async (token: string) => {
+  let res = await request.post('/account-details', { user_token: token });
   return res.data;
 };

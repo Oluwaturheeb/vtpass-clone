@@ -5,8 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { View, StyleSheet } from 'react-native';
 import styles, { pry, other } from './styles';
 import BottomNav from './BottomNav';
-import { registerDevice } from './lib/requests';
-import { str } from './lib/helper';
+import { HelpIcon } from './Components';
 
 const Home = ({ navigation, route }: { navigation: any; route: any }) => {
   const services: Services = route.params;
@@ -14,7 +13,7 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
   // reset the navigation state
   useEffect(() => {
     navigation.dispatch((state: any) => {
-      const routes = state.routes.filter((r: any) => { 
+      const routes = state.routes.filter((r: any) => {
         if (r.name === 'Welcome') {
           return false;
         } else if (r.name === 'Auth') {
@@ -94,7 +93,7 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
   );
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <FlatList
         ListHeaderComponent={() => <Header />}
         // ListFooterComponent={() => <BottomNav />}
@@ -104,7 +103,8 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
         renderItem={({ item }) => <ServiceItems item={item} />}
         contentContainerStyle={{ padding: 10 }}
       />
-      <BottomNav />
+      <HelpIcon nav={navigation} />
+      {/* <BottomNav /> */}
     </View>
   );
 };

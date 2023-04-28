@@ -26,6 +26,10 @@ import Auth from './components/Auth';
 import ListVariation from './components/ListVariation';
 import Details from './components/Details';
 import TransactionDetails from './components/TransactionDetails';
+import { money } from './components/lib/axios';
+import Transactions from './components/Transactions';
+import Notification from './components/Notifications';
+import Help from './components/Help';
 // import Services from './components/services/index';
 // import Airtime from './components/Airtime';
 // import {money} from './components/lib/firestore';
@@ -67,13 +71,15 @@ const App = () => {
               <View style={[styles.frow]}>
                 <IconButton
                   icon="magnify"
-                  onPress={() =>
-                    Alert.alert('Search', 'Implementation is ongoing')
-                  }
+                  onPress={() => props.navigation.navigate('Transactions')}
                   iconColor={MD2Colors.white}
                   style={{ marginVertical: 10 }}
                 />
-                <IconButton icon="bell-outline" iconColor={MD2Colors.white} />
+                <IconButton
+                  icon="bell-outline"
+                  iconColor={MD2Colors.white}
+                  onPress={() => props.navigation.navigate('Notifications')}
+                />
               </View>
             </>
           ) : (
@@ -88,7 +94,7 @@ const App = () => {
                 <Text
                   variant="titleMedium"
                   style={{ color: MD2Colors.white + 'ff' }}>
-                  {props.route.params.title != undefined
+                  {props.route.params?.title != undefined
                     ? props.route.params.title
                     : props.options.title}
                 </Text>
@@ -97,7 +103,7 @@ const App = () => {
                 <View style={[styles.frow, styles.fVertCenter]}>
                   <IconButton
                     icon="magnify"
-                    onPress={() => props.navigation.navigate('Logs')}
+                    onPress={() => props.navigation.navigate('Transactions')}
                     iconColor={MD2Colors.white}
                     style={{ marginVertical: 10 }}
                   />
@@ -105,6 +111,7 @@ const App = () => {
                     icon="bell"
                     iconColor={MD2Colors.white}
                     style={{ marginVertical: 10 }}
+                    onPress={() => props.navigation.navigate('Notifications')}
                   />
                   <IconButton
                     icon="menu"
@@ -128,22 +135,47 @@ const App = () => {
       setUser,
       setId,
       id: { id },
+      homeData,
     } = useUser();
-
+    // console.log(JSON.stringify(user, '', 2));
     return (
       <LinearGradient
         colors={[pry, other]}
         style={{ position: 'relative', height: '100%' }}>
         <View>
-          <Image
-            source={require('./components/assets/vtpass1.png')}
-            resizeMode="contain"
-            style={{ width: '100%', height: 50, marginVertical: 10 }}
-          />
+          {id !== '' ? (
+            <LinearGradient
+              colors={[other + 'cc', pry + 'ee']}
+              style={{
+                height: 100,
+                padding: 5,
+                ...styles.fVertCenter,
+                ...styles.fspace,
+              }}>
+              <Text variant="bodyLarge" style={{ color: '#fff' }}>
+                Hello{' '}
+                {user.content?.name
+                  .replace(user.content.name[0], user.content.name[0])
+                  .toUpperCase()}
+              </Text>
+              <Text variant="bodyMedium" style={{ color: '#fff' }}>
+                Wallet Balance
+              </Text>
+              <Text variant="bodyMedium" style={{ color: '#fff' }}>
+                {money(user.balance)}
+              </Text>
+            </LinearGradient>
+          ) : (
+            <Image
+              source={require('./components/assets/vtpass1.png')}
+              resizeMode="contain"
+              style={{ width: '100%', height: 50, marginVertical: 10 }}
+            />
+          )}
           <TouchableRipple
             rippleColor={pry}
             onPress={() => {
-              nav.navigate('Home');
+              nav.navigate('Home', homeData);
               navRef.current.closeDrawer();
             }}>
             <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
@@ -179,7 +211,7 @@ const App = () => {
               <TouchableRipple
                 rippleColor={MD2Colors.white + '44'}
                 onPress={() => {
-                  nav.navigate('Stats', { stats: 1 });
+                  nav.navigate('Transactions');
                   navRef.current.closeDrawer();
                 }}>
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
@@ -193,23 +225,23 @@ const App = () => {
                   </Text>
                 </View>
               </TouchableRipple>
-              {/* <TouchableRipple
+              <TouchableRipple
                 rippleColor={MD2Colors.white + '44'}
                 onPress={() => {
-                  nav.navigate('Stats', { stats: 1 });
+                  nav.navigate('Notifications', { stats: 1 });
                   navRef.current.closeDrawer();
                 }}>
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
                     style={{ marginVertical: -10 }}
                     iconColor={MD2Colors.white}
-                    icon="script-text-outline"
+                    icon="bell"
                   />
                   <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
-                    Transactions
+                    Notifications
                   </Text>
                 </View>
-              </TouchableRipple> */}
+              </TouchableRipple>
               <TouchableRipple
                 rippleColor={MD2Colors.white + '44'}
                 onPress={() => {
@@ -356,27 +388,26 @@ const App = () => {
                 component={TransactionDetails}
                 options={{ title: 'Transaction Details' }}
               />
-            {/* <Stack.Screen
-              name="Logs"
-              component={Logs}
-              options={{
-                headerTitle: 'Transaction History',
-                title: 'Transaction History',
-              }}
-            />
-            <Stack.Screen
-              name="CustomerProfile"
-              component={CustomerProfile}
-              options={{
-                title: 'Customer Profile',
-              }}
-            />
-            <Stack.Screen
-              name="Admin"
-              component={Admin}
-              options={{ title: 'Admin panel' }}
-            />
-            <Stack.Screen
+              <Stack.Screen
+                name="Transactions"
+                component={Transactions}
+                options={{
+                  title: 'Transactions',
+                }}
+              />
+              <Stack.Screen
+                name="Notifications"
+                component={Notification}
+                options={{
+                  title: 'Notifications',
+                }}
+              />
+              <Stack.Screen
+                name="Help"
+                component={Help}
+                options={{ title: 'Help' }}
+              />
+              {/* <Stack.Screen
               name="Settings"
               component={Settings}
               options={{ title: 'Account Settings' }}
