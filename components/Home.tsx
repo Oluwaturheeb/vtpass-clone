@@ -4,11 +4,12 @@ import { CommonActions } from '@react-navigation/native';
 import { FlatList } from 'react-native-gesture-handler';
 import { View, StyleSheet } from 'react-native';
 import styles, { pry, other } from './styles';
-import BottomNav from './BottomNav';
 import { HelpIcon } from './Components';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Service } from './types/types';
 
 const Home = ({ navigation, route }: { navigation: any; route: any }) => {
-  const services: Services = route.params;
+  const services: Service = route.params;
 
   // reset the navigation state
   useEffect(() => {

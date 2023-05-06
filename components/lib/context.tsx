@@ -6,42 +6,63 @@ import React, {
 } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import request from './axios';
-import { fetchUser, registerDevice, userBalance } from './requests';
+import { fetchUser, registerDevice } from './requests';
 import { str } from './helper';
-// import {users} from './firestore';
-// import {UserSchema} from '../schema';
+import { user as userSchema, userID } from '../types/schema';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { User as UserType, ID } from '../types/types';
 
 const User = createContext({});
 const useUser: Function = () => useContext(User);
 
 const UserProvider = ({ children }: { children: any }) => {
-  let [user, setUser] = useState({});
-  let [id, setId] = useState({ id: '', token: '', deviceId: '' });
+  let [getUser, setUser] = useState(userSchema);
+  let [id, setId] = useState(userID);
   let [homeData, setHomeData] = useState([]);
 
   useLayoutEffect(() => {
     (async () => {
       try {
+        /* await AsyncStorage.setItem(
+          'id',
+          JSON.stringify({
+            deviceId:
+              '9ueN3xeNtWwewA8KcCGUMB0M2kuXAD3kUDHLKCdFhiPB9PSGVAxKM61fAQOQ95Hc2wSbdio8s8yLGjcomRiaX6wswjjYNqtY4bBA',
+            id: 6172,
+            token:
+              'amRhbGk3NjE2dnRsa1JUY3NqfC18OXVlTjN4ZU50V3dld0E4S2NDR1VNQjBNMmt1WEFEM2tVREhMS0NkRmhpUEI5UFNHVkF4S002MWZBUU9ROTVIYzJ3U2JkaW84czh5TEdqY29tUmlhWDZ3c3dqallOcXRZNGJCQQ==',
+            userToken: 'frpFv6GQhod9vT1EwaAvxMEzaDWHY3eK',
+            login: true
+          }),
+        ); */
         let appId = await AsyncStorage.getItem('id');
 
         if (appId) {
-          let id = JSON.parse(appId);
-          setId(id);
-          request.defaults.params.devicekey = id.token;
-          if (id.id) {
-            let user = await fetchUser(id.userToken);
-            let balance = await userBalance(id.userToken);
-            if (user.code == 'success')
-              setUser({ ...user, user: user.content });
-            if (balance.status == 'success')
-              setUser({ ...user, balance: balance.balance });
+          let parseId: ID = JSON.parse(appId);
+          setId(parseId);
+          request.defaults.params.devicekey = parseId.deviceToken;
+          if (parseId.id != 0) {
+            let user = await fetchUser(parseId.userToken);
+            if (user.status == 'success') {
+              let loggedUser: UserType = user.content;
+              setUser(loggedUser);
+              setId({
+                ...parseId,
+                userToken: loggedUser.s_token,
+                id: loggedUser.customer.id,
+              });
+            }
           }
         } else {
           let res = await registerDevice(str(100, false));
           // set the default token
-          request.defaults.params.devicekey = id.token;
+          request.defaults.params.devicekey = id.deviceToken;
           // set the store
-          setId({ ...id, token: res.device_key, deviceId: res.device_id });
+          setId({
+            ...id,
+            deviceToken: res.device_key,
+            deviceId: res.device_id,
+          });
           // save the token
           await AsyncStorage.setItem(
             'id',
@@ -49,30 +70,20 @@ const UserProvider = ({ children }: { children: any }) => {
               ...id,
               token: res.device_key,
               deviceId: res.device_id,
+              login: false,
             }),
           );
         }
       } catch (e) {
-        console.log(e);
+        console.log(e, 'context----');
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* useEffect(() => {
-    const subscriber = (async () => {
-      let appId = await AsyncStorage.getItem('id');
-      setId(appId);
-      return users.doc(appId).onSnapshot(documentSnapshot => {
-        setUser(documentSnapshot.data());
-      });
-    })();
-
-    // Stop listening for updates when no longer required
-    return () => subscriber();
-  }, []); */
   return (
-    <User.Provider value={{ user, setUser, id, setId, homeData, setHomeData }}>
+    <User.Provider
+      value={{ getUser, setUser, id, setId, homeData, setHomeData }}>
       {children}
     </User.Provider>
   );

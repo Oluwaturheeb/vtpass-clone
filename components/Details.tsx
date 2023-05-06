@@ -7,7 +7,7 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ContactPhoneSelection,
 } from 'react-native-select-contact';
-import { initTrans } from './lib/requests';
+import { getTvInfo, initTrans } from './lib/requests';
 import { useUser } from './lib/context';
 import { ScrollView } from 'react-native-gesture-handler';
 import { money } from './lib/axios';
@@ -28,6 +28,8 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
     quantity: 1,
     unique_element: '',
   });
+
+  console.log(param);
 
   const [error, setError] = useState({
     phone: false,
@@ -71,7 +73,7 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
         <Text
           variant="bodySmall"
           style={{ marginLeft: 12, color: other + 'aa' }}>
-          {param.selectedItem.name} - Get instant Top up
+          {param.selectedItem.name} - {param.selectedItem.description}
         </Text>
       </View>
     </View>
@@ -109,17 +111,38 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                   </Text>
                 )}
                 <TextInput
-                  placeholder="08012345678"
+                  placeholder="1234567890"
                   keyboardType="number-pad"
                   placeholderTextColor={other + '66'}
                   value={form.unique_element}
-                  onChangeText={(e: string) =>
-                    setForm({ ...form, unique_element: e })
-                  }
+                  onChangeText={async (e: string) => {
+                    setForm({ ...form, unique_element: e });
+                    if (param.selectedItem.serviceID.includes('tv')) {
+                      if (form.unique_element.length == 9) {
+                        let tv = await getTvInfo(
+                          param.selectedItem.serviceID,
+                          form.unique_element + e,
+                        );
+                        console.log(tv);
+                      }
+                    } else if (param.selectedItem.serviceID.includes('elect')) {
+                      if (form.unique_element.length > 11) {
+                        let tt = await initTrans(
+                          param.selectedItem.product_id,
+                          {
+                            ...form,
+                            identifier: param.selectedVar?.identifier,
+                            customer_id: id?.id,
+                          },
+                        );
+                        console.log(tt);
+                      }
+                    }
+                  }}
                   right={
                     <TextInput.Icon
                       onPress={selectContact}
-                      icon="account-multiple"
+                      icon="card-bulleted-outline"
                       iconColor={MD2Colors.grey200}
                       style={{
                         backgroundColor:
@@ -149,6 +172,24 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                             biller: 'Invalid SmartCard number',
                           },
                         });
+                      } else if (
+                        param.selectedItem.serviceID.includes('elect')
+                      ) {
+                        console.log(form.unique_element.length);
+                        if (
+                          form.unique_element.length > 13 ||
+                          form.unique_element.length < 13
+                        ) {
+                          setError({
+                            ...error,
+                            biller: true,
+                            main: true,
+                            msg: {
+                              ...error.msg,
+                              biller: 'Invalid meter number!',
+                            },
+                          });
+                        }
                       } else {
                         setError({
                           ...error,
@@ -401,11 +442,9 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
               onPress={async () => {
                 let trans = await initTrans(param.selectedItem.product_id, {
                   ...form,
-                  identifier: param.selectedItem.serviceID,
-                  product_id: param.selectedItem.product_id,
+                  identifier: param.selectedVar?.identifier,
                   customer_id: id?.id,
                 });
-                console.log(trans);
 
                 if (trans.status == 'success') {
                   navigation.navigate('TransactionDetails', {

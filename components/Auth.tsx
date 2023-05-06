@@ -11,10 +11,10 @@ import {
 import styles, { other } from './styles';
 import { useUser } from './lib/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { postAuth } from './lib/requests';
+import { fetchUser, postAuth } from './lib/requests';
 
 const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
-  const { setId, setUser } = useUser();
+  const { setId, setUser, id } = useUser();
   const [input, setInput] = useState({
     email: '',
     password: '',
@@ -22,7 +22,7 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
     loading: false,
   });
   const [msg, setMsg] = useState({ msg: '', status: false });
-  const { id, title } = route.params;
+  const { title } = route.params;
 
   const authenticate = async () => {
     setInput({ ...input, loading: true });
@@ -44,9 +44,12 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
         }
 
         let response = await postAuth(url, data);
-
-        setUser(response);
-        setId({ ...id, id: response.c_id, userToken: response.s_token });
+        setId({
+          ...id,
+          id: response.c_id,
+          userToken: response.s_token,
+          login: true,
+        });
         setMsg({
           msg: response.errors
             ? 'Invalid credentials!'
@@ -59,8 +62,11 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
             ...id,
             id: response.c_id,
             userToken: response.s_token,
+            login: true,
           }),
         );
+        let user = await fetchUser(response.s_token);
+        if (user.status) setUser(user.content);
       }
       setInput({ ...input, loading: false });
     } catch (e) {

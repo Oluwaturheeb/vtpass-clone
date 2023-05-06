@@ -30,6 +30,11 @@ import { money } from './components/lib/axios';
 import Transactions from './components/Transactions';
 import Notification from './components/Notifications';
 import Help from './components/Help';
+import Status from './components/TransactionStatus';
+import LoadWallet from './components/LoadWallet';
+import Settings from './components/Settings';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { User } from './components/types/types';
 // import Services from './components/services/index';
 // import Airtime from './components/Airtime';
 // import {money} from './components/lib/firestore';
@@ -130,20 +135,15 @@ const App = () => {
 
   const NavDrawer = () => {
     const nav: any = useNavigation();
-    let {
-      user,
-      setUser,
-      setId,
-      id: { id },
-      homeData,
-    } = useUser();
-    // console.log(JSON.stringify(user, '', 2));
+    let { getUser, setUser, setId, id, homeData } = useUser();
+    let user: User = getUser;
+
     return (
       <LinearGradient
         colors={[pry, other]}
         style={{ position: 'relative', height: '100%' }}>
         <View>
-          {id !== '' ? (
+          {id.id != 0 ? (
             <LinearGradient
               colors={[other + 'cc', pry + 'ee']}
               style={{
@@ -154,15 +154,13 @@ const App = () => {
               }}>
               <Text variant="bodyLarge" style={{ color: '#fff' }}>
                 Hello{' '}
-                {user.content?.name
-                  .replace(user.content.name[0], user.content.name[0])
-                  .toUpperCase()}
+                {user.name.replace(user.name[0], user.name[0]?.toUpperCase())}
               </Text>
               <Text variant="bodyMedium" style={{ color: '#fff' }}>
                 Wallet Balance
               </Text>
               <Text variant="bodyMedium" style={{ color: '#fff' }}>
-                {money(user.balance)}
+                {money(user?.customer?.wallet)}
               </Text>
             </LinearGradient>
           ) : (
@@ -189,12 +187,12 @@ const App = () => {
               </Text>
             </View>
           </TouchableRipple>
-          {id ? (
+          {id.id ? (
             <>
               <TouchableRipple
                 rippleColor={MD2Colors.white + '44'}
                 onPress={() => {
-                  nav.navigate('Admin');
+                  nav.navigate('LoadWallet');
                   navRef.current.closeDrawer();
                 }}>
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
@@ -245,7 +243,7 @@ const App = () => {
               <TouchableRipple
                 rippleColor={MD2Colors.white + '44'}
                 onPress={() => {
-                  nav.navigate('Auth', { type: 'Login' });
+                  nav.navigate('Settings', { type: 'Login' });
                   navRef.current.closeDrawer();
                 }}>
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
@@ -262,9 +260,16 @@ const App = () => {
               <TouchableRipple
                 rippleColor={MD2Colors.white + '44'}
                 onPress={async () => {
-                  await AsyncStorage.removeItem('id');
-                  setId('');
-                  setUser(UserSchema);
+                  await AsyncStorage.setItem(
+                    'id',
+                    JSON.stringify({
+                      ...id,
+                      userToken: '',
+                      id: '',
+                    }),
+                  );
+                  setId({ ...id, login: false });
+                  setUser({});
                   navRef.current.closeDrawer();
                   nav.navigate('Welcome');
                 }}>
@@ -407,12 +412,22 @@ const App = () => {
                 component={Help}
                 options={{ title: 'Help' }}
               />
+              <Stack.Screen
+                name="Status"
+                component={Status}
+                options={{ title: 'Transaction Status' }}
+              />
+              <Stack.Screen
+                name="LoadWallet"
+                component={LoadWallet}
+                options={{ title: 'Load Wallet' }}
+              />
+              <Stack.Screen
+                name="Settings"
+                component={Settings}
+                options={{ title: 'Account Settings' }}
+              />
               {/* <Stack.Screen
-              name="Settings"
-              component={Settings}
-              options={{ title: 'Account Settings' }}
-            />
-            <Stack.Screen
               name="Stats"
               component={Statistics}
               options={{ title: 'Statistics' }}

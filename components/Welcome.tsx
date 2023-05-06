@@ -12,8 +12,10 @@ import { StatusBar } from 'react-native';
 import { getService } from './lib/requests';
 import { useUser } from './lib/context';
 import Animated, { SlideInDown } from 'react-native-reanimated';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ScreenProps } from './types/types';
 
-const Welcome = ({ navigation }: { navigation: any }) => {
+const Welcome = ({ navigation }: ScreenProps) => {
   const { id, setHomeData } = useUser();
   const [show, setShow] = useState(false);
   const [service, setService] = useState();
@@ -22,21 +24,22 @@ const Welcome = ({ navigation }: { navigation: any }) => {
     (async () => {
       let serv = await getService();
 
-      if (id?.id) {
+      if (id.login) {
         setShow(false);
         // get permission to read contact
         await PermissionsAndroid.request('android.permission.READ_CONTACTS');
         try {
           if (serv.code == 'success') {
             setHomeData(serv);
-            setTimeout(() => navigation.push('Home', serv), 0);
+            navigation.navigate('Home', serv);
           } else {
             Alert.alert(
               'Vtpass error',
-              'Something went wrong, kindly reopen the app!',
+              'Something went wrong, kindly contact support!',
             );
           }
         } catch (e) {
+          console.log(e, '    welcome     from catch');
           Alert.alert('Vtpass', 'Something went wrong, kindly reopen the app!');
         }
       } else {
@@ -64,9 +67,7 @@ const Welcome = ({ navigation }: { navigation: any }) => {
               padding: 10,
             }}>
             <Button
-              onPress={() =>
-                navigation.navigate('Auth', { title: 'Login', id })
-              }
+              onPress={() => navigation.navigate('Auth', { title: 'Login' })}
               compact={false}
               textColor={MD2Colors.white}
               style={{
@@ -78,7 +79,7 @@ const Welcome = ({ navigation }: { navigation: any }) => {
             </Button>
             <Button
               onPress={() =>
-                navigation.navigate('Auth', { title: 'Create Account', id })
+                navigation.navigate('Auth', { title: 'Create Account' })
               }
               compact={false}
               mode="outlined"

@@ -27,7 +27,7 @@ const font = {
   titleLarge: {
     fontFamily: 'serif',
     fontSize: 22,
-    fontWeight: '400',
+    fontWeight: 'bold',
     letterSpacing: 0,
     lineHeight: 40,
   },

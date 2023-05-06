@@ -27,3 +27,16 @@ export const validateEmail = (email: string) => {
   if (check) return true;
   else return false;
 };
+
+export const dateTimeFormat = (date: string) => {
+  let newDate = new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: 'numeric',
+    hour12: true,
+    minute: 'numeric',
+  });
+  // time formatting
+  return newDate.format(new Date(date));
+};
