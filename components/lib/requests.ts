@@ -61,3 +61,55 @@ export const getTvInfo = async (service: string, card: string) => {
   let res = await request(`multichoice-lookup/${service}/${card}`);
   return res.data;
 };
+
+export const earnings = async (token: string) => {
+  let res = await request.post('get-earnings', { user_token: token });
+  return res.data;
+};
+
+export const getBanks = async () => {
+  let res = await request('list-banks');
+  return res.data;
+};
+
+export const reset2FA = async (token: string, channel: string) => {
+  let res = await request.get('reset-twofa/' + channel, {
+    params: { user_token: token },
+  });
+  return res.data;
+};
+
+export const update2FA = async (
+  token: string,
+  old: string,
+  newfa: string,
+  type: 'create' | 'update',
+) => {
+  let res = await request.post('update2FA', {
+    user_token: token,
+    old_fa_pin: encode(old),
+    two_fa_pin: encode(newfa),
+    confirm_fa_pin: encode(newfa),
+    type: type ? 'create' : 'update',
+  });
+  return res.data;
+};
+
+export const refDash = async (token: string) => {
+  let res = await request.post('/referral-dashboard', {
+    user_token: token,
+  });
+  return res.data;
+};
+
+export const autoWallets = async (token: string) => {
+  let res = await request.post('/auto-wallets', {
+    user_token: token,
+  });
+  return res.data;
+};
+
+export const changePasswords = async (payload: object) => {
+  let res = await request.post('/update-password', payload);
+  return res.data;
+};

@@ -3,8 +3,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CodePush from 'react-native-code-push';
-import { Alert, Image, StatusBar, View } from 'react-native';
-// import {UserSchema} from './components/schema';
+import { Image, StatusBar, View } from 'react-native';
 import {
   DrawerLayout,
   GestureHandlerRootView,
@@ -18,6 +17,9 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import styles, { other, pry } from './components/styles';
 import { UserProvider, useUser } from './components/lib/context';
+import { money } from './components/lib/axios';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { User } from './components/types/types';
 
 // Screens only
 import Welcome from './components/Welcome';
@@ -26,7 +28,6 @@ import Auth from './components/Auth';
 import ListVariation from './components/ListVariation';
 import Details from './components/Details';
 import TransactionDetails from './components/TransactionDetails';
-import { money } from './components/lib/axios';
 import Transactions from './components/Transactions';
 import Notification from './components/Notifications';
 import Help from './components/Help';
@@ -34,8 +35,11 @@ import Status from './components/TransactionStatus';
 import LoadWallet from './components/LoadWallet';
 import Settings from './components/Settings';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { User } from './components/types/types';
-// import Services from './components/services/index';
+import Earnings from './components/Earnings';
+import Refdash from './components/RefDash';
+import AutoWallet from './components/AutoWallets';
+import Passwords from './components/ChangePassword';
+import KYC from './components/KYC';
 // import Airtime from './components/Airtime';
 // import {money} from './components/lib/firestore';
 // import {UserProvider, useUser} from './components/lib/context';
@@ -137,6 +141,7 @@ const App = () => {
     const nav: any = useNavigation();
     let { getUser, setUser, setId, id, homeData } = useUser();
     let user: User = getUser;
+    console.log(user);
 
     return (
       <LinearGradient
@@ -226,7 +231,24 @@ const App = () => {
               <TouchableRipple
                 rippleColor={MD2Colors.white + '44'}
                 onPress={() => {
-                  nav.navigate('Notifications', { stats: 1 });
+                  nav.navigate('Earnings');
+                  navRef.current.closeDrawer();
+                }}>
+                <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
+                  <IconButton
+                    style={{ marginVertical: -10 }}
+                    iconColor={MD2Colors.white}
+                    icon="account-cash"
+                  />
+                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                    My Earnings
+                  </Text>
+                </View>
+              </TouchableRipple>
+              <TouchableRipple
+                rippleColor={MD2Colors.white + '44'}
+                onPress={() => {
+                  nav.navigate('Notifications');
                   navRef.current.closeDrawer();
                 }}>
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
@@ -264,8 +286,7 @@ const App = () => {
                     'id',
                     JSON.stringify({
                       ...id,
-                      userToken: '',
-                      id: '',
+                      login: false,
                     }),
                   );
                   setId({ ...id, login: false });
@@ -326,7 +347,7 @@ const App = () => {
           <TouchableRipple
             rippleColor={MD2Colors.white + '44'}
             onPress={() => {
-              nav.navigate('Logs');
+              nav.navigate('Help');
               navRef.current.closeDrawer();
             }}>
             <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
@@ -427,12 +448,32 @@ const App = () => {
                 component={Settings}
                 options={{ title: 'Account Settings' }}
               />
+              <Stack.Screen
+                name="Earnings"
+                component={Earnings}
+                options={{ title: 'Earnings' }}
+              />
+              <Stack.Screen
+                name="Refdash"
+                component={Refdash}
+                options={{ title: 'Earnings' }}
+              />
+              <Stack.Screen
+                name="AutoWallet"
+                component={AutoWallet}
+                options={{ title: 'Wallet Funding' }}
+              />
+              <Stack.Screen
+                name="Passwords"
+                component={Passwords}
+                options={{ title: 'Change Password' }}
+              />
+              <Stack.Screen
+                name="KYC"
+                component={KYC}
+                options={{ title: 'KYC & BVN Info' }}
+              />
               {/* <Stack.Screen
-              name="Stats"
-              component={Statistics}
-              options={{ title: 'Statistics' }}
-            />
-            <Stack.Screen
               name="Search"
               component={Search}
               options={{ title: 'Search', headerShown: false }}

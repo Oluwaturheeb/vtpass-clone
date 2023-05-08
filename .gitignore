@@ -4,6 +4,8 @@
 
 # Xcode
 #
+components/Dummy.tsx
+axios.ts
 build/
 *.pbxuser
 !default.pbxuser

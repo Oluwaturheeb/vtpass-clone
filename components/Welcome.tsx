@@ -57,7 +57,7 @@ const Welcome = ({ navigation }: ScreenProps) => {
         source={require('./assets/bg.png')}
         resizeMode="contain"
         style={{ width: '100%', height: '100%', padding: 10 }}>
-        {show && (
+        {show && !id.login && (
           <Animated.View
             entering={SlideInDown.duration(1000).delay(2000)}
             style={{

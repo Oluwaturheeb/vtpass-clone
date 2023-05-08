@@ -38,7 +38,7 @@ const Transactions = ({ navigation }: ScreenProps) => {
         style={{ borderRadius: 5, elevation: 5, shadowColor: other }}
         onPress={() => {
           setDetails({ show: 2, data: item });
-          ref.current.snapToIndex(5);
+          ref.current.snapToIndex(1);
         }}>
         <Card.Content>
           <View style={[styles.frow, styles.fspace, styles.fVertCenter]}>

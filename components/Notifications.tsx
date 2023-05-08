@@ -15,20 +15,25 @@ const Notification = ({
   navigation: any;
 }) => {
   const { id } = useUser();
-  const [notty, setNotty] = useState({ loading: true, data: [] });
+  const [notty, setNotty] = useState({ loading: true, data: [], unread: 0 });
 
   useEffect(() => {
     (async () => {
       let notty = await getNotty(id.userToken);
-      console.log(id, notty);
-      if (notty.status) {
-        setNotty({ loading: false, data: notty.content });
+      if (notty.status == 'success') {
+        setNotty({
+          loading: false,
+          data: notty.message.unreadnotifications.join(
+            notty.message.readnotifications,
+          ),
+          unread: notty.message.unreadtotalCount,
+        });
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const NottyItem = ({ item }) => {
+  const NottyItem = ({ item, index }) => {
     return (
       <Card>
         <Card.Content>
@@ -49,13 +54,15 @@ const Notification = ({
 
   return (
     <>
-      {!notty.loading ? (
+      {notty.loading ? (
         <Loader />
       ) : (
         <FlatList
           contentContainerStyle={{ flex: 1 }}
           data={notty.data}
-          renderItem={({ item }) => <NottyItem item={item} />}
+          renderItem={({ item, index }) => (
+            <NottyItem item={item} index={index} />
+          )}
           ListEmptyComponent={() => <Empty />}
         />
       )}

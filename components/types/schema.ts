@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Customer, ID, Transaction, User } from './types';
+import { Account, Customer, ID, MyEarning, MyWallet, Transaction, User } from './types';
 
 /* let js = {
   accept_field_label: '',
@@ -220,4 +220,45 @@ export const userID: ID = {
   deviceId: '',
   userToken: '',
   login: false,
+};
+
+export const account: Account = { id: 0, name: '' };
+
+export const myEarnings: MyEarning = {
+  accounts: [account],
+  earning_balance: 0,
+  invites_count: 0,
+  refer_status: 0,
+  refer_system_status: 0,
+  ta_status: 0,
+  total_earned: 0,
+  total_withdrawn: 0,
+  tp_status: 0,
+};
+
+export const mywallet: MyWallet = {
+  id: 0,
+  account_reference: '',
+  account_number: 0,
+  account_name: '',
+  bank_name: '',
+  provider: '',
+  trans_lower_amt: 0,
+  trans_upper_amt: 0,
+  daily_upper_limit: 0,
+  charge_flat: 0,
+  charge_percentage: 0,
+  charge_cap: 0,
+  bvn: 0,
+  verification_status: '',
+  date_created: '',
+  customer_id: 0,
+  email: '',
+  creation_method: '',
+  purpose: '',
+  status: '',
+  admin_id: 0,
+  created_at: '',
+  updated_at: '',
+  domain_id: 0,
 };

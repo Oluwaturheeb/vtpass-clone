@@ -302,3 +302,47 @@ export interface ID {
   userToken: string;
   login: true | false;
 }
+
+export interface Account {
+  id: number;
+  name: string;
+}
+
+export interface MyEarning {
+  accounts: Account[];
+  earning_balance: number;
+  invites_count: number;
+  refer_status: number;
+  refer_system_status: number;
+  ta_status: number;
+  total_earned: number;
+  total_withdrawn: number;
+  tp_status: number;
+}
+
+export interface MyWallet {
+  id: number;
+  account_reference: string;
+  account_number: number;
+  account_name: string;
+  bank_name: string;
+  provider: string;
+  trans_lower_amt: number;
+  trans_upper_amt: number;
+  daily_upper_limit: number;
+  charge_flat: number;
+  charge_percentage: number;
+  charge_cap: number;
+  bvn: number;
+  verification_status: string;
+  date_created: string;
+  customer_id: number;
+  email: string;
+  creation_method: string;
+  purpose: string;
+  status: string;
+  admin_id: number;
+  created_at: string;
+  updated_at: string;
+  domain_id: number;
+}

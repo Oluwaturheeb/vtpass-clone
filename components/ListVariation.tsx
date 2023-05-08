@@ -10,7 +10,7 @@ import {
 } from 'react-native-paper';
 import styles, { other, pry } from './styles';
 import filter from 'lodash.filter';
-import { View } from 'react-native';
+import { BackHandler, View } from 'react-native';
 
 const ListVariation = ({
   navigation,
@@ -23,6 +23,7 @@ const ListVariation = ({
   let params = route.params;
   let variation: ServiceExtra = params.variation;
   let variationList: ServiceExtraVariation = params.variationList;
+  console.log(JSON.stringify(variationList, '', 2));
 
   // state
   const [data, setData] = useState<{
@@ -43,8 +44,18 @@ const ListVariation = ({
   });
   const [toggleVar, setToggleVar] = useState(false);
 
+  BackHandler.addEventListener('hardwareBackPress', () => {
+    if (toggleVar) {
+      setToggleVar(false);
+      return true;
+    }
+  });
+
   const ServiceList = ({ item }: { item: ServiceExtra }) => {
-    let check = item.name.includes('VTU');
+    let check =
+      item.name.toLowerCase().includes('VTU') ||
+      item.name.toLowerCase().includes('tv') ||
+      item.name.toLowerCase().includes('startimes');
     return (
       <Card
         style={{ marginBottom: 10 }}
@@ -147,7 +158,9 @@ const ListVariation = ({
             <View
               style={[styles.frow, styles.fVertCenter, { marginBottom: 10 }]}>
               <Avatar.Image
-                source={{ uri: selected.selectedItem.image.replace('https', 'http') }}
+                source={{
+                  uri: selected.selectedItem.image.replace('https', 'http'),
+                }}
                 size={42}
               />
               <View>
@@ -159,7 +172,7 @@ const ListVariation = ({
                 <Text
                   variant="bodySmall"
                   style={{ marginLeft: 12, color: other + 'aa' }}>
-                  {selected.selectedItem.name} - Get instant Top up
+                  {selected.selectedItem.name}
                 </Text>
               </View>
             </View>
@@ -218,6 +231,7 @@ const ListVariation = ({
         toggleVar ? <VariationList item={item} /> : <ServiceList item={item} />
       }
       contentContainerStyle={{ padding: 20 }}
+      showsVerticalScrollIndicator={false}
     />
   );
 };

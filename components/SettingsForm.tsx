@@ -1,40 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useUser } from './lib/context';
+import { autoWallets } from './lib/requests';
+import { mywallet } from './types/schema';
+import { Button, MD2Colors, Text, TextInput } from 'react-native-paper';
 import { ScrollView, View } from 'react-native';
-import {
-  IconButton,
-  MD2Colors,
-  Text,
-  TextInput,
-  Button,
-} from 'react-native-paper';
-import styles, { other, pry } from './styles';
 import { money } from './lib/axios';
-// import { initTrans } from './lib/requests';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ScreenProps } from './types/types';
+import styles, { other, pry } from './styles';
 
-const LoadWallet = ({ navigation }: ScreenProps) => {
-  const [amount, setAmount] = useState({
-    loading: false,
-    error: false,
-    value: '',
-    msg: '',
-  });
+const AutoWallet = () => {
+  const { id } = useUser();
+  const [data, setData] = useState({ loading: true, data: [mywallet] });
+
+  useEffect(() => {
+    (async () => {})();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <ScrollView>
       <View style={{ flex: 1, padding: 10 }}>
-        <View style={[styles.frow]}>
-          <IconButton icon="information" size={32} />
-          <Text style={{ flex: 1 }} variant="bodySmall">
-            Please note that loading your wallet through card as an agent
-            attracts a card processing fee of 1.5%. To avoid paying this charge,
-            please load your wallet through bank deposit
-          </Text>
-        </View>
+        {/* <View style={[styles.frow]}> */}
+        {/* </View> */}
         <TextInput
           label="Amount"
           mode="outlined"
-          placeholder={`Amount to load ${money(5)} - ${money(100000000)}}`}
+          placeholder=""
           keyboardType="number-pad"
           placeholderTextColor={other + '66'}
           value={amount.value}
@@ -75,20 +65,10 @@ const LoadWallet = ({ navigation }: ScreenProps) => {
           returnKeyLabel="Send"
         />
         <Button
-          onPress={async () => {
-            if (amount.value < 1) {
-              setAmount({
-                ...amount,
-                error: true,
-                msg: 'Invalid amount supplied',
-              });
-            } else {
-              setAmount({ ...amount, error: false });
-            }
-          }}
+          onPress={async () => null}
           mode="contained"
           style={{ backgroundColor: pry, borderRadius: 5 }}
-          disabled={amount.error}>
+          disabled={false}>
           Proceed
         </Button>
       </View>
@@ -96,4 +76,4 @@ const LoadWallet = ({ navigation }: ScreenProps) => {
   );
 };
 
-export default LoadWallet;
+export default AutoWallet;
