@@ -16,10 +16,7 @@ const TransactionDetails = ({
   route: any;
   navigation: any;
 }) => {
-  const {
-    user: { balance },
-    id,
-  } = useUser();
+  const { getUser } = useUser();
   let {
     selectedItem,
     selectedVar,
@@ -31,9 +28,12 @@ const TransactionDetails = ({
     },
   } = route.params;
   let balanceCheck =
-    Number(content.amount) + Number(content.convinience_fee) > Number(balance);
+    Number(content.amount) + Number(content.convinience_fee) >
+    Number(getUser?.customer?.wallet);
 
-  const ref = useRef();
+  console.log(JSON.stringify(route.params.trans, '', 2));
+
+  const ref: any = useRef();
   const snapPoints = useMemo(() => ['50%', '60%', '70%', '80%', '95%'], []);
   const [btn, setBtn] = useState(false);
 
@@ -152,10 +152,7 @@ const TransactionDetails = ({
                     disabled={balanceCheck ? true : false}
                     onPress={async () => {
                       setBtn(true);
-                      let pay = await walletPay(
-                        content.transactionId,
-                        id.userToken,
-                      );
+                      let pay = await walletPay(content.transactionId);
                       if (pay.status) {
                         navigation.navigate('Status', pay);
                       }
@@ -163,7 +160,15 @@ const TransactionDetails = ({
                     Pay with Wallet
                   </Button>
                   {balanceCheck && (
-                    <Text variant="bodySmall">Insufficient balance</Text>
+                    <Text
+                      variant="bodySmall"
+                      style={{
+                        textAlign: 'center',
+                        marginVertical: -5,
+                        color: MD2Colors.red500,
+                      }}>
+                      Insufficient balance
+                    </Text>
                   )}
                 </View>
               )}

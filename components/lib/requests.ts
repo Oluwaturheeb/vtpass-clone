@@ -128,4 +128,4 @@ export const getUserBanks = async () => {
 export const deleteFunc = async () => {
   let res = await request.post('/delete-account');
   return res.data;
-}
+};

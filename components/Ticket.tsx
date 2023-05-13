@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useUser } from './lib/context';
 import { Button, MD2Colors, Text, TextInput } from 'react-native-paper';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ID, User } from './types/types';
+import { ID, ScreenProps, User } from './types/types';
 import { ScrollView, View } from 'react-native';
 import { Input } from './Auth';
 import { other } from './styles';
 import { ticket } from './lib/requests';
 
-const Ticket = () => {
+const Ticket = ({ route }: ScreenProps) => {
+  console.log(route.params);
   const { id, getUser }: { id: ID; getUser: User } = useUser();
   const [input, setInput] = useState({
     name: id.login ? `${getUser.name} ${getUser.lastname}` : '',
@@ -26,7 +27,6 @@ const Ticket = () => {
     message: '',
     main: false,
   });
-  console.log(input)
 
   const handleSubmit = async () => {
     setInput({ ...input, loading: true });
@@ -40,7 +40,6 @@ const Ticket = () => {
       setError({ ...error, message: 'Message field is required!', main: true });
     } else {
       let res = await ticket(input);
-      console.log(res);
       if (res.message == 'Successful')
         setInput({
           ...input,
@@ -72,7 +71,7 @@ const Ticket = () => {
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
-      {id.login && (
+      {!id.login && (
         <View>
           <Text variant="bodyMedium" style={{ color: other }}>
             Name

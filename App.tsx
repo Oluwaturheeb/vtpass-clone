@@ -42,16 +42,6 @@ import Passwords from './components/ChangePassword';
 import KYC from './components/KYC';
 import Ticket from './components/Ticket';
 import UserBanks from './components/UserBanks';
-// import Airtime from './components/Airtime';
-// import {money} from './components/lib/firestore';
-// import {UserProvider, useUser} from './components/lib/context';
-// import Logs from './components/Logs';
-// import Admin from './components/Admin';
-// import CustomerProfile from './components/CustomerProfile';
-// import Settings from './components/Settings';
-// import Statistics from './components/Statistics';
-// import Search from './components/Search';
-// import Beneficiary from './components/Beneficiary';
 
 const App = () => {
   const Stack = createNativeStackNavigator();

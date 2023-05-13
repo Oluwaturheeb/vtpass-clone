@@ -8,8 +8,8 @@ import { transactionData, transactionSchema } from './types/schema';
 import { FlatList, Image, View } from 'react-native';
 import styles, { other, pry } from './styles';
 import BottomSheet, { useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
-import { Easing } from 'react-native-reanimated';
-import { dateTimeFormat, money } from './lib/helper';
+
+import { money } from './lib/helper';
 import { ScreenProps, Transaction } from './types/types';
 
 const Transactions = ({ navigation }: ScreenProps) => {
@@ -24,7 +24,7 @@ const Transactions = ({ navigation }: ScreenProps) => {
 
   useEffect(() => {
     (async () => {
-      let getTrans = await transactions(id.userToken);
+      let getTrans = await transactions();
       if (getTrans.status) {
         setTrans({ ...trans, data: getTrans.content, loading: false });
       }
@@ -35,7 +35,12 @@ const Transactions = ({ navigation }: ScreenProps) => {
   const TransItem = ({ item }: { item: Transaction }) => {
     return (
       <Card
-        style={{ borderRadius: 5, elevation: 5, shadowColor: other }}
+        style={{
+          borderRadius: 5,
+          elevation: 5,
+          shadowColor: other,
+          backgroundColor: '#fff',
+        }}
         onPress={() => {
           setDetails({ show: 2, data: item });
           ref.current.snapToIndex(1);
@@ -149,7 +154,12 @@ const Transactions = ({ navigation }: ScreenProps) => {
               </View>
             </View>
             <Card
-              style={{ marginHorizontal: 16, borderRadius: 5, padding: 10 }}>
+              style={{
+                marginHorizontal: 16,
+                borderRadius: 5,
+                padding: 10,
+                backgroundColor: '#fff',
+              }}>
               <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
                 <Text
                   variant="bodyLarge"
@@ -255,6 +265,18 @@ const Transactions = ({ navigation }: ScreenProps) => {
                 Print
               </Button>
             </View>
+            <Button
+              style={{
+                marginVertical: 10,
+                marginHorizontal: 16,
+                borderRadius: 5,
+              }}
+              icon="ticket"
+              buttonColor={other}
+              textColor="white"
+              onPress={() => navigation.navigate('Ticket', details.data)}>
+              Create Ticket With Transaction
+            </Button>
           </BottomSheet>
         </>
       )}
