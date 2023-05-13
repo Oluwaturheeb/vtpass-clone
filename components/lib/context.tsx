@@ -45,7 +45,7 @@ const UserProvider = ({ children }: { children: any }) => {
             request.defaults.params.user_token = parseId.userToken;
             let user = await fetchUser(parseId.userToken);
             let balance = await userBalance();
-            console.log(balance);
+
             if (user.status == 'success') {
               let loggedUser: UserType = {
                 ...user.content,

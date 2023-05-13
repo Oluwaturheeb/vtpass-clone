@@ -136,12 +136,12 @@ const App = () => {
 
     return (
       <LinearGradient
-        colors={[pry, other]}
+        colors={[MD2Colors.blueGrey50, MD2Colors.blueGrey100]}
         style={{ position: 'relative', height: '100%' }}>
         <View>
           {id.id != 0 ? (
             <LinearGradient
-              colors={[other + 'cc', pry + 'ee']}
+              colors={[other, pry + 'dd']}
               style={{
                 height: 100,
                 padding: 5,
@@ -170,7 +170,7 @@ const App = () => {
             />
           )}
           <TouchableRipple
-            rippleColor={pry}
+            rippleColor={pry + 'cc'}
             onPress={() => {
               nav.navigate('Home', homeData);
               navRef.current.closeDrawer();
@@ -178,10 +178,10 @@ const App = () => {
             <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
               <IconButton
                 style={{ marginVertical: -10 }}
-                iconColor={MD2Colors.white}
+                iconColor={other}
                 icon="cash-fast"
               />
-              <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+              <Text variant="bodySmall" style={{ color: other }}>
                 Pay
               </Text>
             </View>
@@ -189,7 +189,7 @@ const App = () => {
           {id.id ? (
             <>
               <TouchableRipple
-                rippleColor={MD2Colors.white + '44'}
+                rippleColor={pry + 'cc'}
                 onPress={() => {
                   nav.navigate('LoadWallet');
                   navRef.current.closeDrawer();
@@ -197,16 +197,16 @@ const App = () => {
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
                     style={{ marginVertical: -10 }}
-                    iconColor={MD2Colors.white}
+                    iconColor={other}
                     icon="wallet"
                   />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                  <Text variant="bodySmall" style={{ color: other }}>
                     Load Wallet
                   </Text>
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                rippleColor={MD2Colors.white + '44'}
+                rippleColor={pry + 'cc'}
                 onPress={() => {
                   nav.navigate('Transactions');
                   navRef.current.closeDrawer();
@@ -214,16 +214,16 @@ const App = () => {
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
                     style={{ marginVertical: -10 }}
-                    iconColor={MD2Colors.white}
+                    iconColor={other}
                     icon="script-text-outline"
                   />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                  <Text variant="bodySmall" style={{ color: other }}>
                     Transactions
                   </Text>
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                rippleColor={MD2Colors.white + '44'}
+                rippleColor={pry + 'cc'}
                 onPress={() => {
                   nav.navigate('Earnings');
                   navRef.current.closeDrawer();
@@ -231,16 +231,16 @@ const App = () => {
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
                     style={{ marginVertical: -10 }}
-                    iconColor={MD2Colors.white}
+                    iconColor={other}
                     icon="account-cash"
                   />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                  <Text variant="bodySmall" style={{ color: other }}>
                     My Earnings
                   </Text>
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                rippleColor={MD2Colors.white + '44'}
+                rippleColor={pry + 'cc'}
                 onPress={() => {
                   nav.navigate('Notifications');
                   navRef.current.closeDrawer();
@@ -248,33 +248,33 @@ const App = () => {
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
                     style={{ marginVertical: -10 }}
-                    iconColor={MD2Colors.white}
+                    iconColor={other}
                     icon="bell"
                   />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                  <Text variant="bodySmall" style={{ color: other }}>
                     Notifications
                   </Text>
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                rippleColor={MD2Colors.white + '44'}
+                rippleColor={pry + 'cc'}
                 onPress={() => {
-                  nav.navigate('Settings', { type: 'Login' });
+                  nav.navigate('Settings');
                   navRef.current.closeDrawer();
                 }}>
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
-                    iconColor={MD2Colors.white}
+                    iconColor={other}
                     icon="account-cog"
                     style={{ marginVertical: -10 }}
                   />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                  <Text variant="bodySmall" style={{ color: other }}>
                     Settings
                   </Text>
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                rippleColor={MD2Colors.white + '44'}
+                rippleColor={pry + 'cc'}
                 onPress={async () => {
                   await AsyncStorage.setItem(
                     'id',
@@ -291,10 +291,10 @@ const App = () => {
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
                     style={{ marginVertical: -10 }}
-                    iconColor={MD2Colors.white}
+                    iconColor={other}
                     icon="logout"
                   />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                  <Text variant="bodySmall" style={{ color: other }}>
                     Logout
                   </Text>
                 </View>
@@ -303,24 +303,24 @@ const App = () => {
           ) : (
             <>
               <TouchableRipple
-                rippleColor={MD2Colors.white + '44'}
+                rippleColor={pry + 'cc'}
                 onPress={() => {
                   nav.navigate('Auth', { title: 'Login' });
                   navRef.current.closeDrawer();
                 }}>
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
-                    iconColor={MD2Colors.white}
+                    iconColor={other}
                     icon="login"
                     style={{ marginVertical: -10 }}
                   />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                  <Text variant="bodySmall" style={{ color: other }}>
                     Login
                   </Text>
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                rippleColor={MD2Colors.white + '44'}
+                rippleColor={pry + 'cc'}
                 onPress={() => {
                   nav.navigate('Auth', { title: 'Create Account' });
                   navRef.current.closeDrawer();
@@ -328,10 +328,10 @@ const App = () => {
                 <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
                   <IconButton
                     style={{ marginVertical: -10 }}
-                    iconColor={MD2Colors.white}
+                    iconColor={other}
                     icon="account-plus"
                   />
-                  <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+                  <Text variant="bodySmall" style={{ color: other }}>
                     Register
                   </Text>
                 </View>
@@ -339,7 +339,7 @@ const App = () => {
             </>
           )}
           <TouchableRipple
-            rippleColor={MD2Colors.white + '44'}
+            rippleColor={pry + 'cc'}
             onPress={() => {
               nav.navigate('Help');
               navRef.current.closeDrawer();
@@ -347,10 +347,10 @@ const App = () => {
             <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
               <IconButton
                 style={{ marginVertical: -10 }}
-                iconColor={MD2Colors.white}
+                iconColor={other}
                 icon="help-circle"
               />
-              <Text variant="bodySmall" style={{ color: MD2Colors.white }}>
+              <Text variant="bodySmall" style={{ color: other }}>
                 Help
               </Text>
             </View>
