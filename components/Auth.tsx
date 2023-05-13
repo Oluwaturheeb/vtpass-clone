@@ -175,12 +175,13 @@ export const Input = ({
   placeholder,
   value,
   state,
+  useLine,
+  line,
 }: // error,
 {
   placeholder: string;
   value: any;
   state: Function;
-  // error: boolean;
 }) => (
   <TextInput
     // error={error}
@@ -190,7 +191,7 @@ export const Input = ({
     outlineColor={other}
     activeOutlineColor={other}
     activeUnderlineColor="#00000000"
-    onChangeText={text => state(text)}
+    onChangeText={(text: any) => state(text)}
     secureTextEntry={placeholder == 'Password'}
     value={value}
     style={{
@@ -199,6 +200,8 @@ export const Input = ({
       backgroundColor: 'transparent',
       borderRadius: 5,
     }}
+    multiline={useLine}
+    numberOfLines={line}
   />
 );
 

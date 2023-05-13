@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useUser } from './lib/context';
-import { autoWallets, changePasswords } from './lib/requests';
-import { mywallet } from './types/schema';
+import { changePasswords } from './lib/requests';
 import {
   Button,
   IconButton,
@@ -10,7 +9,6 @@ import {
   TextInput,
 } from 'react-native-paper';
 import { Alert, ScrollView, View } from 'react-native';
-import { money } from './lib/axios';
 import styles, { other, pry } from './styles';
 
 const Passwords = () => {
@@ -24,7 +22,7 @@ const Passwords = () => {
   const [see, setSee] = useState({ old: true, new: true, confirm: true });
 
   const submitPassword = async () => {
-    if (password.new.length < 8) {
+    if (password.new.length < 6) {
       setPassword({
         ...password,
         msg: 'New Password should be at least minimum of 8 characters',

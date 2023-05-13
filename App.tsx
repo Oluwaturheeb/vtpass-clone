@@ -40,6 +40,8 @@ import Refdash from './components/RefDash';
 import AutoWallet from './components/AutoWallets';
 import Passwords from './components/ChangePassword';
 import KYC from './components/KYC';
+import Ticket from './components/Ticket';
+import UserBanks from './components/UserBanks';
 // import Airtime from './components/Airtime';
 // import {money} from './components/lib/firestore';
 // import {UserProvider, useUser} from './components/lib/context';
@@ -141,7 +143,6 @@ const App = () => {
     const nav: any = useNavigation();
     let { getUser, setUser, setId, id, homeData } = useUser();
     let user: User = getUser;
-    console.log(user);
 
     return (
       <LinearGradient
@@ -159,7 +160,10 @@ const App = () => {
               }}>
               <Text variant="bodyLarge" style={{ color: '#fff' }}>
                 Hello{' '}
-                {user.name.replace(user.name[0], user.name[0]?.toUpperCase())}
+                {user?.name?.replace(
+                  user?.name[0],
+                  user?.name[0]?.toUpperCase(),
+                )}
               </Text>
               <Text variant="bodyMedium" style={{ color: '#fff' }}>
                 Wallet Balance
@@ -472,6 +476,16 @@ const App = () => {
                 name="KYC"
                 component={KYC}
                 options={{ title: 'KYC & BVN Info' }}
+              />
+              <Stack.Screen
+                name="Ticket"
+                component={Ticket}
+                options={{ title: 'Create ticket' }}
+              />
+              <Stack.Screen
+                name="UserBanks"
+                component={UserBanks}
+                options={{ title: 'My Bank Accounts' }}
               />
               {/* <Stack.Screen
               name="Search"

@@ -11,8 +11,8 @@ export const postAuth = async (url: string, payload: object) => {
   return res.data;
 };
 
-export const userBalance = async (token: string) => {
-  let res = await request.post('/get-wallet-balance', { user_token: token });
+export const userBalance = async () => {
+  let res = await request.post('/get-wallet-balance');
   return res.data;
 };
 
@@ -38,22 +38,18 @@ export const fetchUser = async (token: string) => {
   return res.data;
 };
 
-export const transactions = async (token: string) => {
-  let res = await request.post('/get-transactions', { user_token: token });
+export const transactions = async () => {
+  let res = await request.post('/get-transactions');
   return res.data;
 };
 
-export const walletPay = async (id: string, token: string) => {
-  let res = await request.post('/wallet-product-payment/' + id, {
-    user_token: token,
-  });
+export const walletPay = async (id: string) => {
+  let res = await request.post('/wallet-product-payment/' + id);
   return res.data;
 };
 
-export const getNotty = async (token: string) => {
-  let res = await request.post('/display-all-platform-notification', {
-    user_token: token,
-  });
+export const getNotty = async () => {
+  let res = await request.post('/display-all-platform-notification');
   return res.data;
 };
 
@@ -62,8 +58,8 @@ export const getTvInfo = async (service: string, card: string) => {
   return res.data;
 };
 
-export const earnings = async (token: string) => {
-  let res = await request.post('get-earnings', { user_token: token });
+export const earnings = async () => {
+  let res = await request.post('get-earnings');
   return res.data;
 };
 
@@ -113,3 +109,23 @@ export const changePasswords = async (payload: object) => {
   let res = await request.post('/update-password', payload);
   return res.data;
 };
+
+export const submitKyc = async (payload: object) => {
+  let res = await request.post('/update-kyc', payload);
+  return res.data;
+};
+
+export const ticket = async (payload: object) => {
+  let res = await request.post('/contact-us', payload);
+  return res.data;
+};
+
+export const getUserBanks = async () => {
+  let res = await request.get('manage-accounts');
+  return res.data;
+};
+
+export const deleteFunc = async () => {
+  let res = await request.post('/delete-account');
+  return res.data;
+}

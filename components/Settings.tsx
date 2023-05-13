@@ -13,18 +13,18 @@ import {
 } from 'react-native-paper';
 import { Alert, ScrollView, View } from 'react-native';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ScreenProps, User } from './types/types';
+import { ID, ScreenProps, User } from './types/types';
 import styles, { other } from './styles';
 import { money } from './lib/helper';
-import { reset2FA } from './lib/requests';
+import { deleteFunc, reset2FA } from './lib/requests';
 
 const Settings = ({ navigation }: ScreenProps) => {
-  const { getUser, id }: { getUser: User } = useUser();
+  const { getUser, id }: { id: ID; getUser: User } = useUser();
 
   const deleteAcc = async () => {
     Alert.alert(
       'VTpass Info',
-      'Are you sure about this action.\nIt\'s not resversible!',
+      'Sure to delete your account?\nThis action is not resversible!',
       [
         {
           isPreferred: true,
@@ -34,7 +34,7 @@ const Settings = ({ navigation }: ScreenProps) => {
         {
           isPreferred: false,
           onPress: async () => {
-            let action = await deleteFunc(id.userToken);
+            let action = await deleteFunc();
             console.log(action);
           },
           text: 'Yes',
@@ -294,11 +294,13 @@ const Settings = ({ navigation }: ScreenProps) => {
             </TouchableRipple>
           </Card.Content>
         </Card>
-        <Card style={{ margin: 10, backgroundColor: 'white' }}>
+        <Card
+          style={{ margin: 10, backgroundColor: 'white' }}
+          onPress={() => navigation.navigate('UserBanks')}>
           <Card.Content>
             <TouchableRipple
               style={{ paddingVertical: 10, paddingHorizontal: 2 }}
-              onPress={() => null}>
+              onPress={() => navigation.navigate('UserBanks')}>
               <View style={[styles.frow, styles.fspace, styles.fVertCenter]}>
                 <Text
                   variant="bodyLarge"

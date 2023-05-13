@@ -64,6 +64,7 @@ const Help = ({ route, navigation }: ScreenProps) => {
               </Card.Content>
             </Card>
             <Card
+              onPress={() => navigation.navigate('Ticket')}
               mode="outlined"
               style={{
                 borderColor: other,

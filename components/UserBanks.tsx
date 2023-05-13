@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { useUser } from './lib/context';
-import { autoWallets } from './lib/requests';
-import { mywallet } from './types/schema';
+import { getUserBanks } from './lib/requests';
+import { mybank } from './types/schema';
 import { Card, FAB, IconButton, Switch, Text } from 'react-native-paper';
 import { Alert, FlatList, Image, View } from 'react-native';
 import { Loader } from './Components';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { MyWallet } from './types/types';
+import { MyBank } from './types/types';
 import styles, { other } from './styles';
 
-const AutoWallet = () => {
-  const { id } = useUser();
-  const [data, setData] = useState({ loading: true, data: [mywallet] });
+const UserBanks = () => {
+  const [data, setData] = useState({ loading: true, data: [mybank] });
 
   useEffect(() => {
     (async () => {
-      let data = await autoWallets(id.userToken);
-
+      let data = await getUserBanks();
+      console.log(data);
       if (data.status == 'success') {
         setData({ data: data.content, loading: false });
       }
@@ -28,7 +26,7 @@ const AutoWallet = () => {
   //   return null;
   // };
 
-  const CardItem = ({ item }: { item: MyWallet }) => {
+  const CardItem = ({ item }: { item: MyBank }) => {
     return (
       <Card
         style={{ borderRadius: 7, backgroundColor: '#fff', minHeight: 180 }}>
@@ -89,7 +87,7 @@ const AutoWallet = () => {
             color="white"
             icon="plus"
             onPress={() =>
-              Alert.alert('VTpass Alert', 'Generate new auto wallet account?', [
+              Alert.alert('VTpass Alert', 'Wanna add new account?', [
                 {
                   style: 'cancel',
                   text: 'No',
@@ -107,4 +105,4 @@ const AutoWallet = () => {
   );
 };
 
-export default AutoWallet;
+export default UserBanks;

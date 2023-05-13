@@ -346,3 +346,17 @@ export interface MyWallet {
   updated_at: string;
   domain_id: number;
 }
+
+export interface MyBank {
+  account_name: string;
+  account_number: number;
+  alias: string;
+  bank_name: string;
+  created_at: string;
+  customer_id: number;
+  domain_id: number;
+  id: number;
+  identifier: string;
+  status: 'active' | 'inactive';
+  updated_at: string;
+}
