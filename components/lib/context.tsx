@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import request from './axios';
-import { fetchUser, registerDevice } from './requests';
+import { fetchUser, registerDevice, userBalance } from './requests';
 import { str } from './helper';
 import { user as userSchema, userID } from '../types/schema';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,8 +44,13 @@ const UserProvider = ({ children }: { children: any }) => {
           if (parseId.id != 0) {
             request.defaults.params.user_token = parseId.userToken;
             let user = await fetchUser(parseId.userToken);
+            let balance = await userBalance();
+            console.log(balance);
             if (user.status == 'success') {
-              let loggedUser: UserType = user.content;
+              let loggedUser: UserType = {
+                ...user.content,
+                customer: { ...user.content.customer, wallet: balance.balance },
+              };
               setUser(loggedUser);
               setId({
                 ...parseId,
