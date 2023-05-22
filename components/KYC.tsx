@@ -8,6 +8,7 @@ import { Input } from './Auth';
 import { ID, User } from './types/types';
 import DatePicker from 'react-native-date-picker';
 import { submitKyc } from './lib/requests';
+import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 
 const KYC = () => {
   const { id, getUser }: { id: ID; getUser: User } = useUser();
@@ -22,6 +23,7 @@ const KYC = () => {
     date_of_birth: getUser.date_of_birth,
     gender: getUser.gender,
     id_card_number: getUser.idc,
+    id_card: getUser.idc,
   });
 
   const [error, setError] = useState({
@@ -33,6 +35,7 @@ const KYC = () => {
     date_of_birth: '',
     gender: '',
     id_card_number: '',
+    idc: '',
     error: false,
   });
 
@@ -53,12 +56,22 @@ const KYC = () => {
       setError({ ...error, gender: 'Kindly select a gender' });
     } else if (kyc.id_card_number?.trim()?.length < 1) {
       setError({ ...error, id_card_number: 'ID card no. field is required' });
+    } else if (!kyc.idc) {
+      setError({ ...error, id_card_number: 'ID card no. field is required' });
     } else {
-      let res = await submitKyc({
-        ...kyc,
-        user_token: id.userToken,
-      });
+      let res = await submitKyc(kyc);
+      console.log(res);
     }
+  };
+
+  const picker = async () => {
+    let img = await MultipleImagePicker.openPicker({
+      mediaType: 'image',
+      isPreview: true,
+      maxSelectedAssets: 1,
+    });
+
+    console.log(img);
   };
 
   return (
@@ -156,6 +169,30 @@ const KYC = () => {
           placeholder="ID Card No."
           state={(e: any) => setKyc({ ...kyc, id_card_number: e })}
         />
+        <View style={{ marginBottom: 10 }} />
+        <TouchableRipple onPress={picker}>
+          <View
+            style={[
+              styles.frow,
+              styles.fspace,
+              {
+                padding: 16,
+                borderWidth: 1,
+                borderColor: other,
+                borderRadius: 5,
+                alignItems: 'flex-start',
+              },
+            ]}>
+            <Text variant="bodyLarge">
+              {kyc.id_card ? kyc.id_card : 'Upload ID Card'}
+            </Text>
+            <IconButton
+              iconColor={other}
+              icon="chevron-down"
+              style={{ margin: -10 }}
+            />
+          </View>
+        </TouchableRipple>
         <View style={{ marginBottom: 10 }} />
         <Button
           onPress={async () => {}}

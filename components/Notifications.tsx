@@ -4,26 +4,26 @@ import { useUser } from './lib/context';
 import { Loader } from './Components';
 import { FlatList } from 'react-native-gesture-handler';
 import { View } from 'react-native';
-import { Card, IconButton, Text } from 'react-native-paper';
-import styles, { pry } from './styles';
+import { Avatar, Card, IconButton, Text } from 'react-native-paper';
+import styles, { other, pry } from './styles';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Notty, ScreenProps } from './types/types';
+import { nottySchema } from './types/schema';
 
-const Notification = ({
-  route,
-  navigation,
-}: {
-  route: any;
-  navigation: any;
-}) => {
-  const { id } = useUser();
-  const [notty, setNotty] = useState({ loading: true, data: [], unread: 0 });
+const Notification = ({ route, navigation }: ScreenProps) => {
+  const [notty, setNotty] = useState({
+    loading: true,
+    data: [nottySchema],
+    unread: 0,
+  });
 
   useEffect(() => {
     (async () => {
-      let notty = await getNotty(id.userToken);
+      let notty = await getNotty();
       if (notty.status == 'success') {
         setNotty({
           loading: false,
-          data: notty.message.unreadnotifications.join(
+          data: notty.message.unreadnotifications.concat(
             notty.message.readnotifications,
           ),
           unread: notty.message.unreadtotalCount,
@@ -33,11 +33,39 @@ const Notification = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const NottyItem = ({ item, index }) => {
+  const NottyItem = ({ item }: { item: Notty }) => {
+    let img = item.flag.substring(37, item.flag.length - 3);
+    const [click, setClick] = useState({ show: false, id: 0 });
+
+    useEffect(() => {
+      (async () => {
+        if (click.id != 0) {
+          console.log('going read');
+        }
+      })();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [click.id]);
+
     return (
-      <Card>
-        <Card.Content>
-          <Text>Hi</Text>
+      <Card onPress={() => setClick({ id: item.id, show: !click.show })}>
+        <Card.Content style={[styles.frow, { gap: 10 }]}>
+          <Avatar.Image
+            style={{ backgroundColor: 'transparent' }}
+            size={32}
+            source={{ uri: img }}
+          />
+          <View>
+            <Text style={{ color: other }} variant="titleSmall">
+              {item.content}
+            </Text>
+            <Text variant="bodySmall">
+              {click.show
+                ? item.id == click.id
+                  ? item.content + '....'
+                  : item.preamble
+                : item.preamble}
+            </Text>
+          </View>
         </Card.Content>
       </Card>
     );
@@ -58,11 +86,9 @@ const Notification = ({
         <Loader />
       ) : (
         <FlatList
-          contentContainerStyle={{ flex: 1 }}
+          contentContainerStyle={{ flex: 1, padding: 16 }}
           data={notty.data}
-          renderItem={({ item, index }) => (
-            <NottyItem item={item} index={index} />
-          )}
+          renderItem={({ item }) => <NottyItem item={item} />}
           ListEmptyComponent={() => <Empty />}
         />
       )}

@@ -35,7 +35,7 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
   const ServiceItems = ({ item }: { item: Service }) => {
     return (
       <Card
-        style={[{ width: '31.5%', height: 120, marginHorizontal: '1%' }]}
+        style={[{ width: '31.5%', height: 100, marginHorizontal: '1%' }]}
         onPress={() =>
           navigation.navigate('Variations', {
             variation: item.extras,

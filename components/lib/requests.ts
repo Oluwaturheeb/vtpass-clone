@@ -91,10 +91,8 @@ export const update2FA = async (
   return res.data;
 };
 
-export const refDash = async (token: string) => {
-  let res = await request.post('/referral-dashboard', {
-    user_token: token,
-  });
+export const refDash = async () => {
+  let res = await request.post('/referral-dashboard');
   return res.data;
 };
 
@@ -127,5 +125,16 @@ export const getUserBanks = async () => {
 
 export const deleteFunc = async () => {
   let res = await request.post('/delete-account');
+  return res.data;
+};
+
+export const dynamicPayment = async (type: string, trx: string) => {
+  let str = encode(encode(encode(trx)));
+  let res = await request.get(`mobile-process-dynamic-pay/${type}/${str}`);
+  return res.data;
+};
+
+export const refComm = async () => {
+  let res = await request.post('/get-commissions');
   return res.data;
 };

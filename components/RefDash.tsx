@@ -3,21 +3,23 @@ import React, { useEffect, useState } from 'react';
 import { ScreenProps } from './types/types';
 import { Card, IconButton, Text } from 'react-native-paper';
 import { View } from 'react-native';
-import { earnings } from './lib/requests';
-import { useUser } from './lib/context';
+import { refDash } from './lib/requests';
 import { Loader } from './Components';
 import styles, { other } from './styles';
 import { money } from './lib/helper';
+import { refSchema } from './types/schema';
 
 const Refdash = ({ navigation }: ScreenProps) => {
-  const [earning, setEarning] = useState({ loading: true, data: [] });
-  const { id } = useUser();
+  const [ref, setRef] = useState<{ loading: boolean; data: any }>({
+    loading: true,
+    data: refSchema,
+  });
 
   useEffect(() => {
     (async () => {
-      let getEarning = await earnings(id.userToken);
-      if (getEarning.accounts) {
-        setEarning({ loading: false, data: getEarning });
+      let req = await refDash();
+      if (req) {
+        setRef({ loading: false, data: req });
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -25,7 +27,7 @@ const Refdash = ({ navigation }: ScreenProps) => {
 
   return (
     <View style={{ flex: 1 }}>
-      {earning.loading ? (
+      {ref.loading ? (
         <Loader />
       ) : (
         <View style={{ flex: 1, padding: 10 }}>
@@ -43,7 +45,7 @@ const Refdash = ({ navigation }: ScreenProps) => {
               ]}>
               <Card.Content style={styles.fVertCenter}>
                 <Text variant="titleLarge" style={{ color: other }}>
-                  {money(earning.data.earning_balance)}
+                  {}
                 </Text>
                 <Text
                   variant="bodySmall"
@@ -65,7 +67,7 @@ const Refdash = ({ navigation }: ScreenProps) => {
               ]}>
               <Card.Content style={styles.fVertCenter}>
                 <Text variant="titleLarge" style={{ color: other }}>
-                  {money(earning.data.total_earned)}
+
                 </Text>
                 <Text
                   variant="bodySmall"
@@ -87,7 +89,7 @@ const Refdash = ({ navigation }: ScreenProps) => {
               ]}>
               <Card.Content style={styles.fVertCenter}>
                 <Text variant="titleLarge" style={{ color: other }}>
-                  {money(earning.data.total_withdrawn)}
+
                 </Text>
                 <Text
                   variant="bodySmall"
@@ -109,7 +111,7 @@ const Refdash = ({ navigation }: ScreenProps) => {
               ]}>
               <Card.Content style={styles.fVertCenter}>
                 <Text variant="titleLarge" style={{ color: other }}>
-                  {earning.data.invites_count}
+
                 </Text>
                 <Text
                   variant="bodySmall"

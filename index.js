@@ -11,47 +11,47 @@ import { pry } from './components/styles';
 
 const font = {
   titleSmall: {
-    fontFamily: 'serif',
-    fontSize: 14,
-    fontWeight: '500',
+    fontFamily: 'san-serif',
+    fontSize: 15,
+    fontWeight: 'bold',
     letterSpacing: 0.1,
     lineHeight: 20,
   },
   titleMedium: {
-    fontFamily: 'serif',
-    fontSize: 16,
-    fontWeight: '500',
+    fontFamily: 'san-serif',
+    fontSize: 18,
+    fontWeight: 'bold',
     letterSpacing: 0.15,
     lineHeight: 24,
   },
   titleLarge: {
-    fontFamily: 'serif',
-    fontSize: 22,
+    fontFamily: 'san-serif',
+    fontSize: 20,
     fontWeight: 'bold',
     letterSpacing: 0,
     lineHeight: 40,
   },
   bodySmall: {
-    fontFamily: 'serif',
+    fontFamily: 'san-serif',
     fontSize: 10,
     fontWeight: '400',
   },
   bodyMedium: {
-    fontFamily: 'serif',
-    fontSize: 14,
+    fontFamily: 'san-serif',
+    fontSize: 12,
     fontWeight: '400',
   },
   bodyLarge: {
-    fontFamily: 'serif',
-    fontSize: 16,
+    fontFamily: 'san-serif',
+    fontSize: 14,
     fontWeight: '400',
   },
-  default: 'serif',
+  default: 'san-serif',
 };
 const theme = {
   ...MD2LightTheme,
-  fonts: configureFonts({ config: font, isV3: false }),
-  roundness: 5,
+  fonts: configureFonts({ config: font, isV3: true }),
+  roundness: 3,
   colors: {
     ...MD2LightTheme.colors,
     primary: pry,

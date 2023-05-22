@@ -6,15 +6,19 @@ import { money } from './lib/helper';
 import { Share } from 'react-native';
 import { useUser } from './lib/context';
 import { userBalance } from './lib/requests';
+import Animated, { StretchInX } from 'react-native-reanimated';
 
 const Status = ({ route, navigation }: { route: any; navigation: any }) => {
   const param: TransactionStatus = route.params;
-  const { setUser, user, id, homeData } = useUser();
+  const { setUser, getUser, homeData } = useUser();
 
   useEffect(() => {
     (async () => {
-      let bal = await userBalance(id.userToken);
-      setUser({ ...user, balance: bal.balance });
+      let bal = await userBalance();
+      setUser({
+        ...getUser,
+        customer: { ...getUser.customer, wallet: bal.balance },
+      });
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -23,14 +27,14 @@ const Status = ({ route, navigation }: { route: any; navigation: any }) => {
     <View style={[styles.fVertCenter, styles.fcenter, { flex: 1 }]}>
       {param.status == 'success' && (
         <View style={{ marginTop: -75, alignItems: 'center' }}>
-          {/* <Animated.View entering={StretchInX.duration(1000)}> */}
-          <IconButton
-            size={82}
-            icon="check"
-            iconColor="#fff"
-            style={{ backgroundColor: other }}
-          />
-          {/* </Animated.View> */}
+          <Animated.View entering={StretchInX.duration(2000)}>
+            <IconButton
+              size={82}
+              icon="check"
+              iconColor="#fff"
+              style={{ backgroundColor: other }}
+            />
+          </Animated.View>
           <Text variant="titleMedium" style={{ color: other, marginTop: 10 }}>
             Success
           </Text>
@@ -101,6 +105,20 @@ const Status = ({ route, navigation }: { route: any; navigation: any }) => {
         />
         <IconButton
           icon="account-multiple-plus"
+          iconColor="#fff"
+          onPress={async () => {
+            // await Linking.openURL('share://');
+            let share = await Share.share({
+              title: 'Share Receipt',
+              message: param.content.receipt,
+            });
+            console.log(share);
+          }}
+          size={32}
+          style={{ backgroundColor: other }}
+        />
+        <IconButton
+          icon="printer"
           iconColor="#fff"
           onPress={async () => {
             // await Linking.openURL('share://');

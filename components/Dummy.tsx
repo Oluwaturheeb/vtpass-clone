@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useUser } from './lib/context';
-import { autoWallets } from './lib/requests';
-import { mywallet } from './types/schema';
 import { Text } from 'react-native-paper';
 
 const AutoWallet = () => {
@@ -10,11 +8,7 @@ const AutoWallet = () => {
 
   useEffect(() => {
     (async () => {
-      let data = await autoWallets(id.userToken);
-
-      if (data.status == 'success') {
-        setData(data.content);
-      }
+      let data;
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

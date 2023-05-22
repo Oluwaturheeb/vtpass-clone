@@ -1,12 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Account,
+  BillerInfo,
   Customer,
   ID,
   MyBank,
   MyEarning,
   MyWallet,
+  Notty,
+  Referral,
   Transaction,
   User,
+  Variation,
 } from './types';
 
 /* let js = {
@@ -74,6 +79,19 @@ let u = {
   },
 };
  */
+
+export const variationSchema: Variation = {
+  variation: '',
+  amount: 0,
+  identifier: '',
+  product_id: 0,
+  is_unique: false,
+  unique_element: false,
+  unique_element_description: false,
+  is_quantity: false,
+  is_mobile_voucher: false,
+};
+
 export const transactionSchema: Transaction = {
   id: 0,
   transactionId: 0,
@@ -283,4 +301,35 @@ export const mybank: MyBank = {
   identifier: '',
   status: 'inactive',
   updated_at: '',
+};
+
+export const refSchema: Referral = {
+  invites: [],
+  invites_count: 0,
+  refCode: 0,
+  refLink: '',
+  refMessage: '',
+  refer_code_status: 0,
+  refer_status: 0,
+};
+
+export const billerInfo: BillerInfo = {
+  loading: false,
+  code: '',
+  content: {
+    customer_name: '',
+    name: '',
+    due_date: '',
+    amount: 0,
+    error: '',
+  },
+};
+
+export const nottySchema: Notty = {
+  id: 0,
+  subject: '',
+  date: '',
+  flag: '',
+  content: '',
+  preamble: '',
 };

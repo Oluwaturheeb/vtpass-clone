@@ -40,11 +40,11 @@ interface ServiceExtraVariation {
     countries: [];
     foreign_variation: [];
     variation_name: string;
-    variations: DataVariation;
+    variations: Variation;
   };
 }
 
-interface DataVariation {
+export interface Variation {
   variation: string;
   amount: number;
   identifier: string;
@@ -359,4 +359,35 @@ export interface MyBank {
   identifier: string;
   status: 'active' | 'inactive';
   updated_at: string;
+}
+
+export interface Referral {
+  invites: [];
+  invites_count: number;
+  refCode: number;
+  refLink: string;
+  refMessage: string;
+  refer_code_status: number;
+  refer_status: number;
+}
+
+export interface BillerInfo {
+  loading: boolean;
+  code: string;
+  content: {
+    customer_name?: string;
+    name?: string;
+    due_date?: string;
+    amount?: number;
+    error?: string;
+  };
+}
+
+export interface Notty {
+  id: number;
+  subject: string;
+  date: string;
+  flag: string;
+  content: string;
+  preamble: string;
 }

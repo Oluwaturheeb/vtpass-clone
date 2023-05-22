@@ -43,11 +43,11 @@ const Earnings = ({ navigation }: ScreenProps) => {
                 },
               ]}>
               <Card.Content style={styles.fVertCenter}>
-                <Text variant="titleLarge" style={{ color: other }}>
+                <Text variant="titleMedium" style={{ color: other }}>
                   {money(earning.data.earning_balance)}
                 </Text>
                 <Text
-                  variant="bodySmall"
+                  variant="bodyMedium"
                   style={{ marginTop: 7, color: other }}>
                   Earning Balance
                 </Text>
@@ -65,11 +65,11 @@ const Earnings = ({ navigation }: ScreenProps) => {
                 },
               ]}>
               <Card.Content style={styles.fVertCenter}>
-                <Text variant="titleLarge" style={{ color: other }}>
+                <Text variant="titleMedium" style={{ color: other }}>
                   {money(earning.data.total_earned)}
                 </Text>
                 <Text
-                  variant="bodySmall"
+                  variant="bodyMedium"
                   style={{ marginTop: 7, color: other }}>
                   Total Earnings
                 </Text>
@@ -87,11 +87,11 @@ const Earnings = ({ navigation }: ScreenProps) => {
                 },
               ]}>
               <Card.Content style={styles.fVertCenter}>
-                <Text variant="titleLarge" style={{ color: other }}>
+                <Text variant="titleMedium" style={{ color: other }}>
                   {money(earning.data.total_withdrawn)}
                 </Text>
                 <Text
-                  variant="bodySmall"
+                  variant="bodyMedium"
                   style={{ marginTop: 7, color: other }}>
                   Total Withdrawn
                 </Text>
@@ -109,21 +109,24 @@ const Earnings = ({ navigation }: ScreenProps) => {
                 },
               ]}>
               <Card.Content style={styles.fVertCenter}>
-                <Text variant="titleLarge" style={{ color: other }}>
+                <Text variant="titleMedium" style={{ color: other }}>
                   {earning.data.invites_count}
                 </Text>
                 <Text
-                  variant="bodySmall"
+                  variant="bodyMedium"
                   style={{ marginTop: 7, color: other }}>
                   No Referrals
                 </Text>
               </Card.Content>
             </Card>
           </View>
-          <Card mode="elevated" style={{ margin: 5, backgroundColor: 'white' }}>
+          <Card
+            onPress={() => navigation.navigate('RefDash')}
+            mode="elevated"
+            style={{ margin: 5, backgroundColor: 'white' }}>
             <Card.Content
               style={[styles.frow, styles.fspace, styles.fVertCenter]}>
-              <Text variant="titleMedium" style={{ color: other }}>
+              <Text variant="bodyLarge" style={{ color: other }}>
                 Referral Dashboard
               </Text>
               <IconButton
@@ -137,7 +140,7 @@ const Earnings = ({ navigation }: ScreenProps) => {
           <Card mode="elevated" style={{ margin: 5, backgroundColor: 'white' }}>
             <Card.Content
               style={[styles.frow, styles.fspace, styles.fVertCenter]}>
-              <Text variant="titleMedium" style={{ color: other }}>
+              <Text variant="bodyLarge" style={{ color: other }}>
                 Withdraw Earnings
               </Text>
               <IconButton
@@ -151,7 +154,7 @@ const Earnings = ({ navigation }: ScreenProps) => {
           <Card mode="elevated" style={{ margin: 5, backgroundColor: 'white' }}>
             <Card.Content
               style={[styles.frow, styles.fspace, styles.fVertCenter]}>
-              <Text variant="titleMedium" style={{ color: other }}>
+              <Text variant="bodyLarge" style={{ color: other }}>
                 Hearning History
               </Text>
               <IconButton
@@ -165,7 +168,7 @@ const Earnings = ({ navigation }: ScreenProps) => {
           <Card mode="elevated" style={{ margin: 5, backgroundColor: 'white' }}>
             <Card.Content
               style={[styles.frow, styles.fspace, styles.fVertCenter]}>
-              <Text variant="titleMedium" style={{ color: other }}>
+              <Text variant="bodyLarge" style={{ color: other }}>
                 Withdwral History
               </Text>
               <IconButton

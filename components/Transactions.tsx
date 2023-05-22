@@ -5,12 +5,12 @@ import { useUser } from './lib/context';
 import { Loader } from './Components';
 import { Button, Card, MD2Colors, Text } from 'react-native-paper';
 import { transactionData, transactionSchema } from './types/schema';
-import { FlatList, Image, View } from 'react-native';
+import { Alert, FlatList, Image, PermissionsAndroid, View } from 'react-native';
 import styles, { other, pry } from './styles';
 import BottomSheet, { useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
-
 import { money } from './lib/helper';
 import { ScreenProps, Transaction } from './types/types';
+import { BLEPrinter, NetPrinter } from 'react-native-thermal-receipt-printer';
 
 const Transactions = ({ navigation }: ScreenProps) => {
   const ref: any = useRef();
@@ -21,7 +21,9 @@ const Transactions = ({ navigation }: ScreenProps) => {
     data: Transaction;
   }>({ show: -1, data: transactionSchema });
   const snapPoints = useMemo(() => ['50%', '60%', '70%', '80%', '95%'], []);
-
+  const [printer, setPrinters] = useState([
+    { host: '192.168.10.241', port: 9100 },
+  ]);
   useEffect(() => {
     (async () => {
       let getTrans = await transactions();
@@ -31,6 +33,20 @@ const Transactions = ({ navigation }: ScreenProps) => {
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     let perm = await PermissionsAndroid.requestMultiple([
+  //       'android.permission.BLUETOOTH_CONNECT',
+  //       'android.permission.BLUETOOTH_SCAN',
+  //       'android.permission.BLUETOOTH_ADVERTISE',
+  //     ]);
+
+  //     BLEPrinter.init().then(() => {
+  //       BLEPrinter.getDeviceList().then(e => setPrinters(e));
+  //     });
+  //   })();
+  // }, []);
 
   const TransItem = ({ item }: { item: Transaction }) => {
     return (
@@ -114,170 +130,188 @@ const Transactions = ({ navigation }: ScreenProps) => {
             renderItem={({ item }) => <TransItem item={item} />}
             showsVerticalScrollIndicator={false}
           />
-          <BottomSheet
-            enablePanDownToClose={true}
-            handleIndicatorStyle={{ display: 'none' }}
-            snapPoints={snapPoints}
-            ref={ref}
-            index={details.show}>
-            <View style={styles.fVertCenter}>
-              <Text
-                variant="titleLarge"
+          {details.show != -1 && (
+            <BottomSheet
+              enablePanDownToClose={true}
+              handleIndicatorStyle={{ display: 'none' }}
+              snapPoints={snapPoints}
+              onClose={() => setDetails({ ...details, show: -1 })}
+              ref={ref}
+              index={details.show}>
+              <View style={styles.fVertCenter}>
+                <Text
+                  variant="titleLarge"
+                  style={{
+                    color: other,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}>
+                  Transaction Summary
+                </Text>
+                <Text variant="bodySmall">
+                  Kindly verify your transaction summary below
+                </Text>
+              </View>
+              <View
+                style={[
+                  styles.frow,
+                  styles.fcenter,
+                  styles.fVertCenter,
+                  styles.p2,
+                ]}>
+                <Image
+                  source={{
+                    uri: details.data.prodImg.replace('https', 'http'),
+                  }}
+                  resizeMode="contain"
+                  style={{ width: 60, height: 60, marginRight: 10 }}
+                />
+                <View>
+                  <Text
+                    variant="bodyLarge"
+                    style={{ fontWeight: 'bold', color: pry }}>
+                    {details.data.product_name}
+                  </Text>
+                  <Text
+                    variant="bodyLarge"
+                    style={{ fontWeight: 'bold', color: pry }}>
+                    {details.data.unique_element}
+                  </Text>
+                </View>
+              </View>
+              <Card
                 style={{
-                  color: other,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
+                  marginHorizontal: 16,
+                  borderRadius: 5,
+                  padding: 10,
+                  backgroundColor: '#fff',
                 }}>
-                Transaction Summary
-              </Text>
-              <Text variant="bodySmall">
-                Kindly verify your transaction summary below
-              </Text>
-            </View>
-            <View style={[styles.frow, styles.fVertCenter, styles.p2]}>
-              <Image
-                source={{ uri: details.data.prodImg.replace('https', 'http') }}
-                resizeMode="contain"
-                style={{ width: 60, height: 60, marginRight: 10 }}
-              />
-              <View>
-                <Text
-                  variant="bodyLarge"
-                  style={{ fontWeight: 'bold', color: pry }}>
-                  {details.data.product_name}
-                </Text>
-                <Text
-                  variant="bodyLarge"
-                  style={{ fontWeight: 'bold', color: pry }}>
-                  {details.data.unique_element}
-                </Text>
+                <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
+                  <Text
+                    variant="bodyLarge"
+                    style={{
+                      fontWeight: 'bold',
+                      color: other,
+                      paddingVertical: 10,
+                    }}>
+                    Transaction ID
+                  </Text>
+                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                    {details.data.transactionId}
+                  </Text>
+                </View>
+                <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
+                  <Text
+                    variant="bodyLarge"
+                    style={{
+                      fontWeight: 'bold',
+                      color: other,
+                      paddingVertical: 10,
+                    }}>
+                    Transaction Date
+                  </Text>
+                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                    {new Date(details.data.created_at).toLocaleString()}
+                  </Text>
+                </View>
+                <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
+                  <Text
+                    variant="bodyLarge"
+                    style={{
+                      fontWeight: 'bold',
+                      color: other,
+                      paddingVertical: 10,
+                    }}>
+                    Transaction status
+                  </Text>
+                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                    {details.data.status}
+                  </Text>
+                </View>
+                <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
+                  <Text
+                    variant="bodyLarge"
+                    style={{
+                      fontWeight: 'bold',
+                      color: other,
+                      paddingVertical: 10,
+                    }}>
+                    Amount
+                  </Text>
+                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                    {money(details.data.amount)}
+                  </Text>
+                </View>
+                <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
+                  <Text
+                    variant="bodyLarge"
+                    style={{
+                      fontWeight: 'bold',
+                      color: other,
+                      paddingVertical: 10,
+                    }}>
+                    Convenience Fee
+                  </Text>
+                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                    {money(details.data.convinience_fee)}
+                  </Text>
+                </View>
+                <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
+                  <Text
+                    variant="bodyLarge"
+                    style={{
+                      fontWeight: 'bold',
+                      color: other,
+                      paddingVertical: 10,
+                    }}>
+                    Total Amount
+                  </Text>
+                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                    {money(details.data.total_amount)}
+                  </Text>
+                </View>
+              </Card>
+              <View
+                style={[
+                  styles.frow,
+                  styles.fVertCenter,
+                  styles.fspace,
+                  { marginTop: 20, marginHorizontal: 10 },
+                ]}>
+                <Button
+                  style={{ flex: 1, margin: 5, borderRadius: 5 }}
+                  icon="cash-fast"
+                  buttonColor={other}
+                  textColor="white"
+                  onPress={() => navigation.navigate('Home', homeData)}>
+                  Buy Other Services
+                </Button>
+                <Button
+                  style={{ flex: 1, margin: 5, borderRadius: 5 }}
+                  icon="printer"
+                  buttonColor={other}
+                  textColor="white"
+                  // onPress={() => {
+                  //   BLEPrinter.connectPrinter(printer.host);
+                  // }}
+                >
+                  Print
+                </Button>
               </View>
-            </View>
-            <Card
-              style={{
-                marginHorizontal: 16,
-                borderRadius: 5,
-                padding: 10,
-                backgroundColor: '#fff',
-              }}>
-              <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
-                <Text
-                  variant="bodyLarge"
-                  style={{ fontWeight: 'bold', color: other }}>
-                  Transaction ID
-                </Text>
-                <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
-                  {details.data.transactionId}
-                </Text>
-              </View>
-              <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
-                <Text
-                  variant="bodyLarge"
-                  style={{
-                    fontWeight: 'bold',
-                    color: other,
-                    paddingVertical: 10,
-                  }}>
-                  Transaction Date
-                </Text>
-                <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
-                  {new Date(details.data.created_at).toLocaleString()}
-                </Text>
-              </View>
-              <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
-                <Text
-                  variant="bodyLarge"
-                  style={{
-                    fontWeight: 'bold',
-                    color: other,
-                    paddingVertical: 10,
-                  }}>
-                  Transaction status
-                </Text>
-                <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
-                  {details.data.status}
-                </Text>
-              </View>
-              <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
-                <Text
-                  variant="bodyLarge"
-                  style={{
-                    fontWeight: 'bold',
-                    color: other,
-                    paddingVertical: 10,
-                  }}>
-                  Amount
-                </Text>
-                <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
-                  {money(details.data.amount)}
-                </Text>
-              </View>
-              <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
-                <Text
-                  variant="bodyLarge"
-                  style={{
-                    fontWeight: 'bold',
-                    color: other,
-                    paddingVertical: 10,
-                  }}>
-                  Convenience Fee
-                </Text>
-                <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
-                  {money(details.data.convinience_fee)}
-                </Text>
-              </View>
-              <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
-                <Text
-                  variant="bodyLarge"
-                  style={{
-                    fontWeight: 'bold',
-                    color: other,
-                    paddingVertical: 10,
-                  }}>
-                  Total Amount
-                </Text>
-                <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
-                  {money(details.data.total_amount)}
-                </Text>
-              </View>
-            </Card>
-            <View
-              style={[
-                styles.frow,
-                styles.fVertCenter,
-                styles.fspace,
-                { marginTop: 20, marginHorizontal: 10 },
-              ]}>
               <Button
-                style={{ flex: 1, margin: 5, borderRadius: 5 }}
-                icon="cash-fast"
+                style={{
+                  marginVertical: 10,
+                  marginHorizontal: 16,
+                  borderRadius: 5,
+                }}
+                icon="flag"
                 buttonColor={other}
                 textColor="white"
-                onPress={() => navigation.navigate('Home', homeData)}>
-                Buy Other Services
+                onPress={() => navigation.navigate('Ticket', details.data)}>
+                Create Ticket With Transaction
               </Button>
-              <Button
-                style={{ flex: 1, margin: 5, borderRadius: 5 }}
-                icon="printer"
-                buttonColor={other}
-                textColor="white"
-                onPress={() => navigation.navigate('Home', homeData)}>
-                Print
-              </Button>
-            </View>
-            <Button
-              style={{
-                marginVertical: 10,
-                marginHorizontal: 16,
-                borderRadius: 5,
-              }}
-              icon="ticket"
-              buttonColor={other}
-              textColor="white"
-              onPress={() => navigation.navigate('Ticket', details.data)}>
-              Create Ticket With Transaction
-            </Button>
-          </BottomSheet>
+            </BottomSheet>
+          )}
         </>
       )}
     </View>

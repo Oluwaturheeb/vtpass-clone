@@ -23,20 +23,7 @@ const UserProvider = ({ children }: { children: any }) => {
   useLayoutEffect(() => {
     (async () => {
       try {
-        /* await AsyncStorage.setItem(
-          'id',
-          JSON.stringify({
-            deviceId:
-              '9ueN3xeNtWwewA8KcCGUMB0M2kuXAD3kUDHLKCdFhiPB9PSGVAxKM61fAQOQ95Hc2wSbdio8s8yLGjcomRiaX6wswjjYNqtY4bBA',
-            id: 6172,
-            token:
-              'amRhbGk3NjE2dnRsa1JUY3NqfC18OXVlTjN4ZU50V3dld0E4S2NDR1VNQjBNMmt1WEFEM2tVREhMS0NkRmhpUEI5UFNHVkF4S002MWZBUU9ROTVIYzJ3U2JkaW84czh5TEdqY29tUmlhWDZ3c3dqallOcXRZNGJCQQ==',
-            userToken: 'frpFv6GQhod9vT1EwaAvxMEzaDWHY3eK',
-            login: true
-          }),
-        ); */
         let appId = await AsyncStorage.getItem('id');
-
         if (appId) {
           let parseId: ID = JSON.parse(appId);
           setId(parseId);
@@ -61,6 +48,7 @@ const UserProvider = ({ children }: { children: any }) => {
           }
         } else {
           let res = await registerDevice(str(100, false));
+          console.log(res);
           // set the default token
           request.defaults.params.devicekey = id.deviceToken;
           // set the store

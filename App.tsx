@@ -93,8 +93,10 @@ const App = () => {
                   style={{ marginVertical: 10 }}
                 />
                 <Text
-                  variant="titleMedium"
-                  style={{ color: MD2Colors.white + 'ff' }}>
+                  ellipsizeMode="tail"
+                  numberOfLines={1}
+                  variant="titleSmall"
+                  style={{ color: MD2Colors.white + 'ff', width: 180 }}>
                   {props.route.params?.title != undefined
                     ? props.route.params.title
                     : props.options.title}
@@ -139,7 +141,7 @@ const App = () => {
         colors={[MD2Colors.blueGrey50, MD2Colors.blueGrey100]}
         style={{ position: 'relative', height: '100%' }}>
         <View>
-          {id.id != 0 ? (
+          {id.login != 0 ? (
             <LinearGradient
               colors={[other, pry + 'dd']}
               style={{
@@ -164,9 +166,14 @@ const App = () => {
             </LinearGradient>
           ) : (
             <Image
-              source={require('./components/assets/vtpass1.png')}
+              source={require('./components/assets/vtpass.png')}
               resizeMode="contain"
-              style={{ width: '100%', height: 50, marginVertical: 10 }}
+              style={{
+                width: '80%',
+                height: 100,
+                marginTop: 20,
+                marginHorizontal: 10,
+              }}
             />
           )}
           <TouchableRipple
@@ -186,7 +193,7 @@ const App = () => {
               </Text>
             </View>
           </TouchableRipple>
-          {id.id ? (
+          {id.login ? (
             <>
               <TouchableRipple
                 rippleColor={pry + 'cc'}
@@ -448,7 +455,7 @@ const App = () => {
                 options={{ title: 'Earnings' }}
               />
               <Stack.Screen
-                name="Refdash"
+                name="RefDash"
                 component={Refdash}
                 options={{ title: 'Earnings' }}
               />

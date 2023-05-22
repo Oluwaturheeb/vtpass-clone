@@ -23,7 +23,7 @@ const ListVariation = ({
   let params = route.params;
   let variation: ServiceExtra = params.variation;
   let variationList: ServiceExtraVariation = params.variationList;
-  console.log(JSON.stringify(variationList, '', 2));
+  // console.log(JSON.stringify(variationList, '', 2));
 
   // state
   const [data, setData] = useState<{
@@ -44,16 +44,9 @@ const ListVariation = ({
   });
   const [toggleVar, setToggleVar] = useState(false);
 
-  BackHandler.addEventListener('hardwareBackPress', () => {
-    if (toggleVar) {
-      setToggleVar(false);
-      return true;
-    }
-  });
-
   const ServiceList = ({ item }: { item: ServiceExtra }) => {
     let check =
-      item.name.toLowerCase().includes('VTU') ||
+      item.name.toLowerCase().includes('vtu') ||
       item.name.toLowerCase().includes('tv') ||
       item.name.toLowerCase().includes('startimes');
     return (
@@ -105,6 +98,15 @@ const ListVariation = ({
   };
 
   const VariationList = ({ item }: { item: DataVariation }) => {
+    useEffect(() => {
+      BackHandler.addEventListener('hardwareBackPress', function () {
+        if (toggleVar) {
+          setToggleVar(false);
+          return true;
+        }
+      });
+    }, []);
+
     return (
       <Card
         style={{ marginBottom: 10, shadowColor: other }}

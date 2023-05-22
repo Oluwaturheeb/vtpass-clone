@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo, useRef } from 'react';
 import { ImageBackground, View } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import { pry } from './styles';
-import Animated, { BounceIn } from 'react-native-reanimated';
+import { other, pry } from './styles';
+import Animated, { BounceIn, BounceInDown } from 'react-native-reanimated';
+import BottomSheet from '@gorhom/bottom-sheet';
 
 export const Loader = () => (
   <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -28,3 +29,34 @@ export const HelpIcon = ({ nav }: any) => (
     />
   </Animated.View>
 );
+
+export const BShit = ({
+  children,
+  show,
+}: {
+  children: JSX.Element;
+  show: any;
+}) => {
+  const ref: any = useRef();
+  const snapPoints = useMemo(() => ['50%', '60%', '70%', '80%', '105%'], []);
+  return (
+    <Animated.View
+      entering={BounceInDown.duration(2000)}
+      style={{
+        position: 'absolute',
+        bottom: -16,
+        height: '100%',
+        width: '100%',
+        backgroundColor: 'transparent',
+      }}>
+      <BottomSheet
+        handleIndicatorStyle={{ backgroundColor: other + '55' }}
+        snapPoints={snapPoints}
+        style={{ padding: 10 }}
+        ref={ref}
+        index={show}>
+        {children}
+      </BottomSheet>
+    </Animated.View>
+  );
+};
