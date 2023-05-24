@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import {
-  BackHandler,
-  FlatList,
   KeyboardAvoidingView,
   StyleSheet,
   View,
+  ScrollView,
 } from 'react-native';
 import {
   ActivityIndicator,
@@ -25,18 +24,18 @@ import {
 } from 'react-native-select-contact';
 import { getTvInfo, initTrans } from './lib/requests';
 import { useUser } from './lib/context';
-import { ScrollView } from 'react-native-gesture-handler';
 import { money } from './lib/axios';
 import { BShit, Loader } from './Components';
 import { billerInfo } from './types/schema';
 import filter from 'lodash.filter';
 import { Variation } from './types/types';
+import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 
 const Details = ({ route, navigation }: { navigation: any; route: any }) => {
   const { id, getUser } = useUser();
   const param = route.params;
   const [form, setForm] = useState({
-    phone_number: '',
+    phone_number: id.login ? getUser.phone : '',
     email: id.login ? getUser.email : '',
     amount: param.selectedVar?.amount
       ? param.selectedVar?.amount == 0
@@ -105,6 +104,7 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
 
   useEffect(() => {
     (async () => {
+      setError({ ...error, biller: false, msg: { ...error.msg, biller: '' } });
       if (form.unique_element.length > 9) {
         setUserInfo({ ...billerInfo, loading: true });
         if (param.selectedItem.serviceID.includes('tv')) {
@@ -114,10 +114,12 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
           );
 
           if (tv.content?.error) {
+            console.log(tv);
             return setError({
               ...error,
-              biller: tv.content?.error,
               main: true,
+              biller: true,
+              msg: { ...error.msg, biller: tv.content?.error },
             });
           } else {
             return setUserInfo({ ...tv, loading: false });
@@ -282,8 +284,12 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
 
     return (
       <View style={{ height: '95%' }}>
-        <FlatList
-          ListHeaderComponentStyle={{ marginBottom: 20 }}
+        <BottomSheetFlatList
+          ListHeaderComponentStyle={{
+            marginBottom: 20,
+            backgroundColor: 'white',
+            marginHorizontal: -2,
+          }}
           ListHeaderComponent={
             <TextInput
               placeholder="Search..."
@@ -296,7 +302,7 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
               value={data.key}
               onChangeText={(text: string) => {
                 let searchResult = filter(
-                  data.filter,
+                  data.variation,
                   (item: any) =>
                     item.amount.toString().includes(text) ||
                     item.variation
@@ -324,9 +330,10 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
           }
           data={data.key == '' ? data.variation : data.filter}
           renderItem={({ item }) => <VariationList item={item} />}
-          contentContainerStyle={{ padding: 10, height: '100%' }}
+          contentContainerStyle={{ padding: 10 }}
           showsVerticalScrollIndicator={false}
           scrollEnabled={true}
+          stickyHeaderIndices={[0]}
         />
       </View>
     );
@@ -342,6 +349,84 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
     ? true
     : false;
 
+  const submitHandler = async () => {
+    // setBtn(true);
+    let makeError = { ...error };
+
+    if (
+      checkFn('tv') ||
+      checkFn('star') ||
+      checkFn('elect') ||
+      checkFn('jam')
+    ) {
+      if (!form.unique_element) {
+        makeError = {
+          ...makeError,
+          main: true,
+          biller: true,
+          msg: {
+            ...makeError.msg,
+            biller: `${param.selectedItem.unique_element_description} field is required!`,
+          },
+        };
+      }
+    }
+
+    if (!form.amount) {
+      makeError = {
+        ...makeError,
+        main: true,
+        amount: true,
+        msg: {
+          ...makeError.msg,
+          amount: 'Amount field is required!',
+        },
+      };
+    }
+
+    if (!form.phone_number) {
+      makeError = {
+        ...makeError,
+        main: true,
+        phone: true,
+        msg: {
+          ...makeError.msg,
+          phone: 'Phone field is required!',
+        },
+      };
+    }
+
+    if (!form.email) {
+      makeError = {
+        ...makeError,
+        main: true,
+        email: true,
+        msg: {
+          ...makeError.msg,
+          email: 'Email field is required!',
+        },
+      };
+    }
+
+    if (makeError.main) {
+      setError(makeError);
+    } else {
+      let trans = await initTrans(param.selectedItem.product_id, {
+        ...form,
+        identifier: param.selectedVar?.identifier,
+        customer_id: id.login ? id.id : '',
+      });
+
+      if (trans.status == 'success') {
+        navigation.navigate('TransactionDetails', {
+          ...param,
+          trans,
+        });
+      }
+    }
+    setBtn(false);
+  };
+
   return (
     <KeyboardAvoidingView style={{ flex: 1 }}>
       {btn ? (
@@ -351,7 +436,7 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{ padding: 20 }}>
               <Heading />
-              <DisplayInfo />
+              {!error.biller && <DisplayInfo />}
               <View>
                 {checkType && (
                   <>
@@ -736,24 +821,7 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                   />
                 </View>
                 <Button
-                  onPress={async () => {
-                    setBtn(true);
-                    let trans = await initTrans(param.selectedItem.product_id, {
-                      ...form,
-                      identifier: param.selectedVar?.identifier,
-                      customer_id: id.login ? id.id : '',
-                    });
-
-                    console.log(JSON.stringify(trans, '', 2));
-
-                    setBtn(false);
-                    if (trans.status == 'success') {
-                      navigation.navigate('TransactionDetails', {
-                        ...param,
-                        trans,
-                      });
-                    }
-                  }}
+                  onPress={submitHandler}
                   mode="contained"
                   style={{ backgroundColor: pry, borderRadius: 5 }}
                   disabled={error.main}>
@@ -774,6 +842,11 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                     Select Action
                   </Text>
                   <TouchableRipple
+                    style={{
+                      borderWidth: 1,
+                      borderColor: other + 20,
+                      borderRadius: 5,
+                    }}
                     rippleColor={other + 99}
                     onPress={() => {
                       setForm({

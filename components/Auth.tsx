@@ -89,46 +89,46 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [msg]);
 
-  useEffect(() => {
-    (async () => {
-      if (fingerprint.show) {
-        const auth = new ReactNativeBiometrics({
-          allowDeviceCredentials: true,
-        });
+  const handler = async () => {
+    if (fingerprint.show) {
+      const auth = new ReactNativeBiometrics({
+        allowDeviceCredentials: true,
+      });
 
-        let check = await auth.isSensorAvailable();
+      let check = await auth.isSensorAvailable();
 
-        if (!check.available) {
-          Alert.alert(
-            'VTpass',
-            'Your device does not appear to have fingerprint sensor!',
-          );
+      if (!check.available) {
+        Alert.alert(
+          'VTpass',
+          'Your device does not appear to have fingerprint sensor!',
+        );
+      } else {
+        if (!id.id) {
+          Alert.alert('VTpass', 'You to login first with your credentials');
         } else {
-          if (!id.id) {
-            Alert.alert('VTpass', 'You to login first with your credentials');
-          } else {
-            let login = await auth.simplePrompt({
-              promptMessage: 'Fingerprint Authentication',
-              fallbackPromptMessage: 'Alternative Authentication',
-              cancelButtonText: 'Close',
-            });
-            setFingerPrint({ show: !fingerprint.show, set: true });
-            if (login.success) {
-              setId({ ...id, login: true });
-              await AsyncStorage.setItem(
-                'id',
-                JSON.stringify({
-                  ...id,
-                  login: true,
-                }),
-              );
-            }
-
-            console.log(login);
+          let login = await auth.simplePrompt({
+            promptMessage: 'Fingerprint Authentication',
+            fallbackPromptMessage: 'Alternative Authentication',
+            cancelButtonText: 'Close',
+          });
+          setFingerPrint({ show: !fingerprint.show, set: true });
+          if (login.success) {
+            setId({ ...id, login: true });
+            await AsyncStorage.setItem(
+              'id',
+              JSON.stringify({
+                ...id,
+                login: true,
+              }),
+            );
           }
+
+          console.log(login);
         }
       }
-    })();
+    }
+  };
+  useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fingerprint.show]);
 
@@ -212,7 +212,7 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
             Or login with your FingerPrint
           </Text>
           <IconButton
-            onPress={() => setFingerPrint({ ...fingerprint, show: true })}
+            onPress={handler}
             icon="fingerprint"
             size={56}
             iconColor={other}

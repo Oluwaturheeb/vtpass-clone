@@ -8,6 +8,7 @@ import {
   MyEarning,
   MyWallet,
   Notty,
+  PrinterObj,
   Referral,
   Transaction,
   User,
@@ -332,4 +333,9 @@ export const nottySchema: Notty = {
   flag: '',
   content: '',
   preamble: '',
+};
+
+export const pSchema: PrinterObj = {
+  device_name: '',
+  inner_mac_address: '',
 };

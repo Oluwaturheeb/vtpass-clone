@@ -2,14 +2,31 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { transactions } from './lib/requests';
 import { useUser } from './lib/context';
-import { Loader } from './Components';
-import { Button, Card, MD2Colors, Text } from 'react-native-paper';
-import { transactionData, transactionSchema } from './types/schema';
-import { Alert, FlatList, Image, PermissionsAndroid, View } from 'react-native';
+import { BShit, Loader } from './Components';
+import {
+  Button,
+  Card,
+  IconButton,
+  MD2Colors,
+  Text,
+  TouchableRipple,
+} from 'react-native-paper';
+import { pSchema, transactionData, transactionSchema } from './types/schema';
+import {
+  Alert,
+  BackHandler,
+  FlatList,
+  Image,
+  PermissionsAndroid,
+  View,
+} from 'react-native';
 import styles, { other, pry } from './styles';
-import BottomSheet, { useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  BottomSheetFlatList,
+  useBottomSheetSpringConfigs,
+} from '@gorhom/bottom-sheet';
 import { money } from './lib/helper';
-import { ScreenProps, Transaction } from './types/types';
+import { PrinterObj, ScreenProps, Transaction } from './types/types';
 import { BLEPrinter, NetPrinter } from 'react-native-thermal-receipt-printer';
 
 const Transactions = ({ navigation }: ScreenProps) => {
@@ -21,9 +38,13 @@ const Transactions = ({ navigation }: ScreenProps) => {
     data: Transaction;
   }>({ show: -1, data: transactionSchema });
   const snapPoints = useMemo(() => ['50%', '60%', '70%', '80%', '95%'], []);
-  const [printer, setPrinters] = useState([
-    { host: '192.168.10.241', port: 9100 },
-  ]);
+
+  const [printer, setPrinters] = useState({
+    show: false,
+    printers: [],
+    curr: {},
+  });
+
   useEffect(() => {
     (async () => {
       let getTrans = await transactions();
@@ -34,19 +55,36 @@ const Transactions = ({ navigation }: ScreenProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     let perm = await PermissionsAndroid.requestMultiple([
-  //       'android.permission.BLUETOOTH_CONNECT',
-  //       'android.permission.BLUETOOTH_SCAN',
-  //       'android.permission.BLUETOOTH_ADVERTISE',
-  //     ]);
+  // printer permission and setting
+  useEffect(() => {
+    (async () => {
+      await PermissionsAndroid.requestMultiple([
+        'android.permission.BLUETOOTH_CONNECT',
+        'android.permission.BLUETOOTH_SCAN',
+        'android.permission.BLUETOOTH_ADVERTISE',
+      ]);
 
-  //     BLEPrinter.init().then(() => {
-  //       BLEPrinter.getDeviceList().then(e => setPrinters(e));
-  //     });
-  //   })();
-  // }, []);
+      BLEPrinter.init().then(() => {
+        BLEPrinter.getDeviceList()
+          .then(printers => setPrinters({ ...printer, printers }))
+          .catch(e => console.log('err, ', e));
+      });
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // closing the modal with backhandler
+  useEffect(() => {
+    let back = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (printer.show) {
+        setPrinters({ ...printer, show: false });
+      } else if (details.show !== -1) {
+        setDetails({ ...details, show: -1 });
+        return true;
+      } else navigation.goBack();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [details.show]);
 
   const TransItem = ({ item }: { item: Transaction }) => {
     return (
@@ -110,12 +148,42 @@ const Transactions = ({ navigation }: ScreenProps) => {
     );
   };
 
-  const animated = useBottomSheetSpringConfigs({
-    damping: 10,
-    overshootClamping: true,
-    restDisplacementThreshold: 0.9,
-    restSpeedThreshold: 0.9,
-  });
+  const buyAgain = () => {
+    console.log(details.data);
+  };
+
+  const BlueSelect = () => {
+    const print = (item: PrinterObj) => {
+      let toPrint = details.data.receipt;
+      BLEPrinter.connectPrinter(item.inner_mac_address);
+      BLEPrinter.printBill(toPrint);
+      // setPrinters({ ...printer, show: false, curr: item })
+    };
+    const List = ({ item }: { item: PrinterObj }) => (
+      <TouchableRipple rippleColor={other + 99} onPress={() => print(item)}>
+        <View style={[styles.frow, styles.fVertCenter, { gap: 10 }]}>
+          <IconButton icon="bluetooth" />
+          <Text variant="bodyMedium">{item.device_name}</Text>
+        </View>
+      </TouchableRipple>
+    );
+    return (
+      <BShit show={1}>
+        <BottomSheetFlatList
+          ListEmptyComponent={() => (
+            <View style={[styles.fVertCenter, {marginTop: 20}]}>
+              <IconButton icon="bluetooth-off" iconColor="#bbb" size={84} />
+              <Text variant="bodyLarge" style={{textAlign: 'center', color: '#bbb'}}>
+                No Bluetooth device found!
+              </Text>
+            </View>
+          )}
+          data={printer.printers}
+          renderItem={({ item }) => <List item={item} />}
+        />
+      </BShit>
+    );
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -188,7 +256,7 @@ const Transactions = ({ navigation }: ScreenProps) => {
                 }}>
                 <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
                   <Text
-                    variant="bodyLarge"
+                    variant="bodyMedium"
                     style={{
                       fontWeight: 'bold',
                       color: other,
@@ -196,13 +264,16 @@ const Transactions = ({ navigation }: ScreenProps) => {
                     }}>
                     Transaction ID
                   </Text>
-                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                  <Text
+                    variant="bodyMedium"
+                    selectable={true}
+                    style={{ color: MD2Colors.grey500 }}>
                     {details.data.transactionId}
                   </Text>
                 </View>
                 <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
                   <Text
-                    variant="bodyLarge"
+                    variant="bodyMedium"
                     style={{
                       fontWeight: 'bold',
                       color: other,
@@ -210,13 +281,16 @@ const Transactions = ({ navigation }: ScreenProps) => {
                     }}>
                     Transaction Date
                   </Text>
-                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                  <Text
+                    variant="bodyMedium"
+                    selectable={true}
+                    style={{ color: MD2Colors.grey500 }}>
                     {new Date(details.data.created_at).toLocaleString()}
                   </Text>
                 </View>
                 <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
                   <Text
-                    variant="bodyLarge"
+                    variant="bodyMedium"
                     style={{
                       fontWeight: 'bold',
                       color: other,
@@ -224,13 +298,16 @@ const Transactions = ({ navigation }: ScreenProps) => {
                     }}>
                     Transaction status
                   </Text>
-                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                  <Text
+                    variant="bodyMedium"
+                    selectable={true}
+                    style={{ color: MD2Colors.grey500 }}>
                     {details.data.status}
                   </Text>
                 </View>
                 <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
                   <Text
-                    variant="bodyLarge"
+                    variant="bodyMedium"
                     style={{
                       fontWeight: 'bold',
                       color: other,
@@ -238,13 +315,16 @@ const Transactions = ({ navigation }: ScreenProps) => {
                     }}>
                     Amount
                   </Text>
-                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                  <Text
+                    variant="bodyMedium"
+                    selectable={true}
+                    style={{ color: MD2Colors.grey500 }}>
                     {money(details.data.amount)}
                   </Text>
                 </View>
                 <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
                   <Text
-                    variant="bodyLarge"
+                    variant="bodyMedium"
                     style={{
                       fontWeight: 'bold',
                       color: other,
@@ -252,13 +332,16 @@ const Transactions = ({ navigation }: ScreenProps) => {
                     }}>
                     Convenience Fee
                   </Text>
-                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                  <Text
+                    variant="bodyMedium"
+                    selectable={true}
+                    style={{ color: MD2Colors.grey500 }}>
                     {money(details.data.convinience_fee)}
                   </Text>
                 </View>
                 <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
                   <Text
-                    variant="bodyLarge"
+                    variant="bodyMedium"
                     style={{
                       fontWeight: 'bold',
                       color: other,
@@ -266,17 +349,33 @@ const Transactions = ({ navigation }: ScreenProps) => {
                     }}>
                     Total Amount
                   </Text>
-                  <Text selectable={true} style={{ color: MD2Colors.grey500 }}>
+                  <Text
+                    variant="bodyMedium"
+                    selectable={true}
+                    style={{ color: MD2Colors.grey500 }}>
                     {money(details.data.total_amount)}
                   </Text>
                 </View>
               </Card>
+              <Button
+                style={{
+                  marginVertical: 10,
+                  marginHorizontal: 16,
+                  borderRadius: 5,
+                  marginTop: 20,
+                }}
+                icon="sync"
+                buttonColor={other}
+                textColor="white"
+                onPress={buyAgain}>
+                Buy again
+              </Button>
               <View
                 style={[
                   styles.frow,
                   styles.fVertCenter,
                   styles.fspace,
-                  { marginTop: 20, marginHorizontal: 10 },
+                  { marginHorizontal: 10 },
                 ]}>
                 <Button
                   style={{ flex: 1, margin: 5, borderRadius: 5 }}
@@ -291,25 +390,19 @@ const Transactions = ({ navigation }: ScreenProps) => {
                   icon="printer"
                   buttonColor={other}
                   textColor="white"
-                  // onPress={() => {
-                  //   BLEPrinter.connectPrinter(printer.host);
-                  // }}
-                >
+                  onPress={() => setPrinters({ ...printer, show: true })}>
                   Print
                 </Button>
+                <Button
+                  style={{ flex: 1, margin: 5, borderRadius: 5 }}
+                  icon="flag"
+                  buttonColor={other}
+                  textColor="white"
+                  onPress={() => navigation.navigate('Ticket', details.data)}>
+                  Report
+                </Button>
               </View>
-              <Button
-                style={{
-                  marginVertical: 10,
-                  marginHorizontal: 16,
-                  borderRadius: 5,
-                }}
-                icon="flag"
-                buttonColor={other}
-                textColor="white"
-                onPress={() => navigation.navigate('Ticket', details.data)}>
-                Create Ticket With Transaction
-              </Button>
+              {printer.show && <BlueSelect />}
             </BottomSheet>
           )}
         </>

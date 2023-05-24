@@ -23,7 +23,6 @@ export const HelpIcon = ({ nav }: any) => (
     <IconButton
       iconColor="#fff"
       icon="help"
-      // size={}
       onPress={() => nav.navigate('Help')}
       style={{ backgroundColor: pry, borderRadius: 100, elevation: 4 }}
     />

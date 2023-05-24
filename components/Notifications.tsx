@@ -87,6 +87,7 @@ const Notification = ({ route, navigation }: ScreenProps) => {
       ) : (
         <FlatList
           contentContainerStyle={{ flex: 1, padding: 16 }}
+          ItemSeparatorComponent={() => <View style={{margin: 5 }} />}
           data={notty.data}
           renderItem={({ item }) => <NottyItem item={item} />}
           ListEmptyComponent={() => <Empty />}

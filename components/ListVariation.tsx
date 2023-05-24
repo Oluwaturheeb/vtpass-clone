@@ -103,7 +103,7 @@ const ListVariation = ({
         if (toggleVar) {
           setToggleVar(false);
           return true;
-        }
+        } else navigation.goBack();
       });
     }, []);
 

@@ -1,9 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CodePush from 'react-native-code-push';
-import { Image, StatusBar, View } from 'react-native';
+import { BackHandler, Image, StatusBar, View } from 'react-native';
 import {
   DrawerLayout,
   GestureHandlerRootView,
@@ -135,6 +135,24 @@ const App = () => {
     const nav: any = useNavigation();
     let { getUser, setUser, setId, id, homeData } = useUser();
     let user: User = getUser;
+
+    // BackHandler.addEventListener('hardwareBackPress', () => {
+    //   if (navRef.current.state.drawerOpened) {
+    //     navRef.current.closeDrawer();
+    //     return true;
+    //   } else nav.goBack();
+    // });
+
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      if (navRef.current.state.drawerOpened) {
+        navRef.current.closeDrawer();
+        return true;
+      } else if (!nav.canGoBack()) {
+        BackHandler.removeEventListener('hardwareBackPress', () => false);
+      }
+    });
+
+    BackHandler.removeEventListener('hardwareBackPress', () => true);
 
     return (
       <LinearGradient

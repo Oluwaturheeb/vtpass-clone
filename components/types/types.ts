@@ -391,3 +391,8 @@ export interface Notty {
   content: string;
   preamble: string;
 }
+
+export interface PrinterObj {
+  device_name: string;
+  inner_mac_address: string;
+}

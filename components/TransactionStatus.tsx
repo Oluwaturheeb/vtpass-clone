@@ -27,7 +27,7 @@ const Status = ({ route, navigation }: { route: any; navigation: any }) => {
     <View style={[styles.fVertCenter, styles.fcenter, { flex: 1 }]}>
       {param.status == 'success' && (
         <View style={{ marginTop: -75, alignItems: 'center' }}>
-          <Animated.View entering={StretchInX.duration(2000)}>
+          <Animated.View entering={StretchInX.duration(1000)}>
             <IconButton
               size={82}
               icon="check"
