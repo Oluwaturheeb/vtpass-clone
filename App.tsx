@@ -42,6 +42,9 @@ import Passwords from './components/ChangePassword';
 import KYC from './components/KYC';
 import Ticket from './components/Ticket';
 import UserBanks from './components/UserBanks';
+import Withdrawal from './components/Withdrawal';
+import Withdrawals from './components/Withdrawals';
+import Finder from './components/Finder';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
@@ -475,7 +478,7 @@ const App = () => {
               <Stack.Screen
                 name="RefDash"
                 component={Refdash}
-                options={{ title: 'Earnings' }}
+                options={{ title: 'Referral Dashboard' }}
               />
               <Stack.Screen
                 name="AutoWallet"
@@ -502,12 +505,22 @@ const App = () => {
                 component={UserBanks}
                 options={{ title: 'My Bank Accounts' }}
               />
+              <Stack.Screen
+                name="Withdrawal"
+                component={Withdrawal}
+                options={{ title: 'Withdraw Earnings' }}
+              />
+              <Stack.Screen
+                name="Withdrawals"
+                component={Withdrawals}
+                options={{ title: 'Withdrawal History' }}
+              />
+              <Stack.Screen
+                name="Finder"
+                component={Finder}
+                options={{ title: 'Find Token' }}
+              />
               {/* <Stack.Screen
-              name="Search"
-              component={Search}
-              options={{ title: 'Search', headerShown: false }}
-            />
-            <Stack.Screen
               name="Beneficiary"
               component={Beneficiary}
               options={{ title: 'Beneficiaries' }}

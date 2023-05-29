@@ -13,6 +13,7 @@ import {
   Transaction,
   User,
   Variation,
+  Withdrawal,
 } from './types';
 
 /* let js = {
@@ -338,4 +339,29 @@ export const nottySchema: Notty = {
 export const pSchema: PrinterObj = {
   device_name: '',
   inner_mac_address: '',
+};
+
+export const withdrawal: Withdrawal = {
+  account_name: '',
+  account_number: '',
+  admin_id: 0,
+  amount: 0,
+  bank_code: '',
+  bank_details: '',
+  bank_name: '',
+  created_at: '',
+  customer_id: 0,
+  destination: '',
+  duplicate_check: '',
+  id: 0,
+  method: '',
+  raw_response: '',
+  ref: '',
+  remarks: '',
+  requestId: 0,
+  service_charge: '',
+  status: '',
+  total_amount: 0,
+  type: '',
+  updated_at: '',
 };

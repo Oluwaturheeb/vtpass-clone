@@ -21,10 +21,7 @@ import {
   View,
 } from 'react-native';
 import styles, { other, pry } from './styles';
-import BottomSheet, {
-  BottomSheetFlatList,
-  useBottomSheetSpringConfigs,
-} from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { money } from './lib/helper';
 import { PrinterObj, ScreenProps, Transaction } from './types/types';
 import { BLEPrinter, NetPrinter } from 'react-native-thermal-receipt-printer';
@@ -81,7 +78,9 @@ const Transactions = ({ navigation }: ScreenProps) => {
       } else if (details.show !== -1) {
         setDetails({ ...details, show: -1 });
         return true;
-      } else navigation.goBack();
+      } else {
+        navigation.goBack();
+      }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [details.show]);
@@ -171,9 +170,11 @@ const Transactions = ({ navigation }: ScreenProps) => {
       <BShit show={1}>
         <BottomSheetFlatList
           ListEmptyComponent={() => (
-            <View style={[styles.fVertCenter, {marginTop: 20}]}>
+            <View style={[styles.fVertCenter, { marginTop: 20 }]}>
               <IconButton icon="bluetooth-off" iconColor="#bbb" size={84} />
-              <Text variant="bodyLarge" style={{textAlign: 'center', color: '#bbb'}}>
+              <Text
+                variant="bodyLarge"
+                style={{ textAlign: 'center', color: '#bbb' }}>
                 No Bluetooth device found!
               </Text>
             </View>

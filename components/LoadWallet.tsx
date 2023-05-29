@@ -24,7 +24,7 @@ const LoadWallet = ({ navigation }: ScreenProps) => {
     <ScrollView>
       <View style={{ flex: 1, padding: 10 }}>
         <View style={[styles.frow]}>
-          <IconButton icon="information" size={32} />
+          <IconButton icon="information" size={32} iconColor={other} />
           <Text style={{ flex: 1 }} variant="bodySmall">
             Please note that loading your wallet through card as an agent
             attracts a card processing fee of 1.5%. To avoid paying this charge,

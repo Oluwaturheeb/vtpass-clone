@@ -396,3 +396,33 @@ export interface PrinterObj {
   device_name: string;
   inner_mac_address: string;
 }
+
+export interface Bank {
+  bank_code: string;
+  bank_name: string;
+}
+
+export interface Withdrawal {
+  account_name: string;
+  account_number: string;
+  admin_id: number;
+  amount: number;
+  bank_code: string;
+  bank_details: '';
+  bank_name: string;
+  created_at: string;
+  customer_id: number;
+  destination: string;
+  duplicate_check: string;
+  id: number;
+  method: string;
+  raw_response: string;
+  ref: string;
+  remarks: string;
+  requestId: 0;
+  service_charge: string;
+  status: string;
+  total_amount: number;
+  type: string;
+  updated_at: string;
+}

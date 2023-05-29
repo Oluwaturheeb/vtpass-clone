@@ -209,6 +209,7 @@ const TransactionDetails = ({
                         onPress={async () => {
                           setBtn(true);
                           let pay = await walletPay(content.transactionId);
+                          console.log(JSON.stringify(pay, '', 2))
                           if (pay.status) {
                             navigation.navigate('Status', pay);
                           }

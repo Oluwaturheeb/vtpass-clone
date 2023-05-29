@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useUser } from './lib/context';
 import {
   Avatar,
@@ -17,9 +17,11 @@ import { ID, ScreenProps, User } from './types/types';
 import styles, { other } from './styles';
 import { money } from './lib/helper';
 import { deleteFunc, reset2FA } from './lib/requests';
+import { BShit } from './Components';
 
 const Settings = ({ navigation }: ScreenProps) => {
   const { getUser, id }: { id: ID; getUser: User } = useUser();
+  const [select, setSelect] = useState(-1);
 
   const deleteAcc = async () => {
     Alert.alert(
@@ -57,7 +59,7 @@ const Settings = ({ navigation }: ScreenProps) => {
           isPreferred: false,
           onPress: async () => {
             let action = await reset2FA(id.userToken, 'mobile');
-            console.log(action);
+            Alert.alert('VTpass Info', action.message);
           },
           text: 'Yes',
         },
@@ -73,7 +75,6 @@ const Settings = ({ navigation }: ScreenProps) => {
             {
               paddingVertical: 10,
               paddingHorizontal: 16,
-              // backgroundColor: 'white',
             },
             styles.fspace,
             styles.frow,
@@ -193,7 +194,7 @@ const Settings = ({ navigation }: ScreenProps) => {
           <Card.Content>
             <TouchableRipple
               style={{ paddingTop: 10, paddingBottom: 0, paddingHorizontal: 2 }}
-              onPress={() => null}>
+              onPress={() => setSelect(2)}>
               <View
                 style={[
                   styles.frow,
@@ -237,7 +238,7 @@ const Settings = ({ navigation }: ScreenProps) => {
                     </View>
                   )}
                   <Switch
-                    value={getUser.status == 'active' ? true : false}
+                    value={getUser.two_fa_status == 'active' ? true : false}
                     color={other}
                     style={{ marginVertical: -10 }}
                   />
@@ -344,9 +345,9 @@ const Settings = ({ navigation }: ScreenProps) => {
         <Card style={{ margin: 10, backgroundColor: 'white' }}>
           <Card.Content>
             <TouchableRipple
-              style={{ paddingVertical: 10, paddingHorizontal: 2 }}
+              style={{ paddingVertical: 10, paddingHorizontal: 1 }}
               onPress={deleteAcc}>
-              <View style={[styles.frow, styles.fspace, styles.fVertCenter]}>
+              <View style={[styles.frow, styles.fVertCenter, styles.fspace]}>
                 <Text
                   variant="bodyLarge"
                   style={{ color: MD2Colors.red600, fontWeight: 'bold' }}>
@@ -363,6 +364,43 @@ const Settings = ({ navigation }: ScreenProps) => {
           </Card.Content>
         </Card>
       </ScrollView>
+      {select != -1 && (
+        <BShit show={select}>
+          <View>
+            <Text
+              variant="titleSmall"
+              style={{ textAlign: 'center', marginVertical: 10, color: other }}>
+              Select 2FA type
+            </Text>
+            <TouchableRipple
+              rippleColor={other + 99}
+              onPress={() => setSelect(-1)}>
+              <View style={[styles.frow, styles.fVertCenter]}>
+                <IconButton icon="lock" iconColor={other} />
+                <View>
+                  <Text variant="bodyLarge">Pin</Text>
+                  <Text variant="bodySmall">
+                    Use Pin to protect your transactions
+                  </Text>
+                </View>
+              </View>
+            </TouchableRipple>
+            <TouchableRipple
+              rippleColor={other + 99}
+              onPress={() => setSelect(-1)}>
+              <View style={[styles.frow, styles.fVertCenter]}>
+                <IconButton icon="fingerprint" iconColor={other} />
+                <View>
+                  <Text variant="bodyLarge">FingerPrint</Text>
+                  <Text variant="bodySmall">
+                    Use Fingerprint to protect your transactions
+                  </Text>
+                </View>
+              </View>
+            </TouchableRipple>
+          </View>
+        </BShit>
+      )}
     </Provider>
   );
 };

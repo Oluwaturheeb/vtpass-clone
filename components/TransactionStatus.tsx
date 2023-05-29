@@ -98,7 +98,6 @@ const Status = ({ route, navigation }: { route: any; navigation: any }) => {
               title: 'Share Receipt',
               message: param.content.receipt,
             });
-            console.log(share);
           }}
           size={32}
           style={{ backgroundColor: other }}

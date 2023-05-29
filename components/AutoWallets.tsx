@@ -52,6 +52,7 @@ const AutoWallet = () => {
               </Text>
               <Text variant="bodyLarge">{item.account_name}</Text>
               <Text
+                variant="bodyMedium"
                 selectable={true}
                 style={{ marginVertical: 10 }}
                 selectionColor={other}>

@@ -91,6 +91,11 @@ export const update2FA = async (
   return res.data;
 };
 
+export const verify2FA = async (data: any) => {
+  let res = await request.post('verify-2fapin', data);
+  return res.data;
+};
+
 export const refDash = async () => {
   let res = await request.post('/referral-dashboard');
   return res.data;
@@ -123,6 +128,11 @@ export const getUserBanks = async () => {
   return res.data;
 };
 
+export const addBank = async (body: object) => {
+  let res = await request.post('/add-bank-account', body);
+  return res.data;
+};
+
 export const deleteFunc = async () => {
   let res = await request.post('/delete-account');
   return res.data;
@@ -136,5 +146,30 @@ export const dynamicPayment = async (type: string, trx: string) => {
 
 export const refComm = async () => {
   let res = await request.post('/get-commissions');
+  return res.data;
+};
+
+export const refJoin = async (name: string) => {
+  let res = await request.post('/activate-referral', { name });
+  return res.data;
+};
+
+export const sendRefMsg = async (data: object) => {
+  let res = await request.post('/send-referral-invite', data);
+  return res.data;
+};
+
+export const getWithdrawal = async (search?: object) => {
+  let res = await request.post('/get-withdrawals', search);
+  return res.data;
+};
+
+export const withdrawComm = async (method: object) => {
+  let res = await request.post('/withdraw-commission', method);
+  return res.data;
+};
+
+export const findToken = async (body: object) => {
+  let res = await request.post('/find-my-token', body);
   return res.data;
 };

@@ -8,7 +8,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 export const Loader = () => (
   <View style={{ flex: 1, backgroundColor: '#fff' }}>
     <ImageBackground
-      source={require('./assets/vtpass.gif')}
+      source={require('./assets/vtpass_loader.gif')}
       style={{ width: '100%', height: '100%', flex: 1 }}
       resizeMethod="resize"
       resizeMode="contain"
@@ -49,6 +49,7 @@ export const BShit = ({
         backgroundColor: 'transparent',
       }}>
       <BottomSheet
+        enablePanDownToClose={true}
         handleIndicatorStyle={{ backgroundColor: other + '55' }}
         snapPoints={snapPoints}
         style={{ padding: 10 }}

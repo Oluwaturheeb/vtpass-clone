@@ -27,9 +27,9 @@ const UserProvider = ({ children }: { children: any }) => {
         if (appId) {
           let parseId: ID = JSON.parse(appId);
           setId(parseId);
-          request.defaults.params.devicekey = parseId.deviceToken;
+          request.defaults.params['devicekey'] = parseId.deviceToken;
           if (parseId.id != 0) {
-            request.defaults.params.user_token = parseId.userToken;
+            request.defaults.params['user_token'] = parseId.userToken;
             let user = await fetchUser(parseId.userToken);
             let balance = await userBalance();
 
@@ -48,9 +48,8 @@ const UserProvider = ({ children }: { children: any }) => {
           }
         } else {
           let res = await registerDevice(str(100, false));
-          console.log(res);
           // set the default token
-          request.defaults.params.devicekey = id.deviceToken;
+          request.defaults.params['devicekey'] = res.device_key;
           // set the store
           setId({
             ...id,
@@ -62,7 +61,7 @@ const UserProvider = ({ children }: { children: any }) => {
             'id',
             JSON.stringify({
               ...id,
-              token: res.device_key,
+              deviceToken: res.device_key,
               deviceId: res.device_id,
               login: false,
             }),
@@ -73,7 +72,7 @@ const UserProvider = ({ children }: { children: any }) => {
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getUser]);
 
   return (
     <User.Provider

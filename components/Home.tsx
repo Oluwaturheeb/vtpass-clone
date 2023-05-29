@@ -85,6 +85,7 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
         </Text>
       </View>
       <Button
+        onPress={() => navigation.navigate('Finder')}
         icon="lightbulb-on"
         labelStyle={{ color: MD2Colors.white, fontSize: 10 }}
         style={{ backgroundColor: pry, borderRadius: 6 }}>
