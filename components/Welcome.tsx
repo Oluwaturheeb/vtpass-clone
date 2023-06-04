@@ -22,15 +22,26 @@ const Welcome = ({ navigation }: ScreenProps) => {
 
   useEffect(() => {
     (async () => {
-      let serv = await getService();
+      // request permission
+      await PermissionsAndroid.requestMultiple([
+        'android.permission.BLUETOOTH_CONNECT',
+        'android.permission.BLUETOOTH_SCAN',
+        'android.permission.BLUETOOTH_ADVERTISE',
+        'android.permission.READ_CONTACTS',
+      ]);
+
+      let serv;
+      if (id.deviceToken) {
+        serv = await getService({ devicekey: id.deviceToken });
+        setHomeData(serv);
+        setService(serv);
+      }
 
       if (id.login) {
         setShow(false);
         // get permission to read contact
-        await PermissionsAndroid.request('android.permission.READ_CONTACTS');
         try {
           if (serv.code == 'success') {
-            setHomeData(serv);
             navigation.navigate('Home', serv);
           } else {
             Alert.alert(
@@ -39,16 +50,15 @@ const Welcome = ({ navigation }: ScreenProps) => {
             );
           }
         } catch (e) {
-          console.log(e, '    welcome     from catch');
+          // console.log(e, '    welcome     from catch');
           Alert.alert('Vtpass', 'Something went wrong, kindly reopen the app!');
         }
       } else {
-        setService(serv);
         setShow(true);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id.deviceToken]);
 
   return (
     <View style={[css.bg, styles.fcenter]}>
@@ -59,7 +69,7 @@ const Welcome = ({ navigation }: ScreenProps) => {
         style={{ width: '100%', height: '100%', padding: 10 }}>
         {show && !id.login && (
           <Animated.View
-            entering={SlideInDown.duration(1000).delay(2000)}
+            entering={SlideInDown.duration(1000).delay(1000)}
             style={{
               width: '100%',
               height: '100%',

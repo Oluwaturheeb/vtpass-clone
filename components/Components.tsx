@@ -28,14 +28,13 @@ export const HelpIcon = ({ nav }: any) => (
     />
   </Animated.View>
 );
-
-export const BShit = ({
-  children,
-  show,
-}: {
+type PropType = {
+  show?: number;
   children: JSX.Element;
-  show: any;
-}) => {
+};
+
+export const BShit = (props: PropType) => {
+  let { show, children } = props;
   const ref: any = useRef();
   const snapPoints = useMemo(() => ['50%', '60%', '70%', '80%', '105%'], []);
   return (

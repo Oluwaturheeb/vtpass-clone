@@ -1,8 +1,9 @@
 import request from './axios';
 import { encode } from 'base-64';
 
-export const getService = async () => {
-  const res = await request.get('/entry-point');
+export const getService = async (params: object) => {
+  const res = await request.get('/entry-point', { params: params });
+  // console.log(JSON.stringify(res, '', 1));
   return res.data;
 };
 

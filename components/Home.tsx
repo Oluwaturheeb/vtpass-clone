@@ -9,7 +9,9 @@ import { HelpIcon } from './Components';
 import { Service } from './types/types';
 
 const Home = ({ navigation, route }: { navigation: any; route: any }) => {
-  const services: Service = route.params;
+  const service: Service = route.params;
+  console.log(service);
+  
 
   // reset the navigation state
   useEffect(() => {
@@ -99,7 +101,7 @@ const Home = ({ navigation, route }: { navigation: any; route: any }) => {
       <FlatList
         ListHeaderComponent={() => <Header />}
         // ListFooterComponent={() => <BottomNav />}
-        data={services?.content}
+        data={service?.code == 'success' ? service?.content : []}
         ItemSeparatorComponent={() => <View style={{ marginVertical: 5 }} />}
         numColumns={3}
         renderItem={({ item }) => <ServiceItems item={item} />}

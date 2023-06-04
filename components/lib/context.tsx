@@ -68,11 +68,11 @@ const UserProvider = ({ children }: { children: any }) => {
           );
         }
       } catch (e) {
-        console.log(e, 'context----');
+        alert('something went south from context');
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getUser]);
+  }, [id.id]);
 
   return (
     <User.Provider

@@ -15,7 +15,8 @@ import { fetchUser, postAuth } from './lib/requests';
 import ReactNativeBiometrics from 'react-native-biometrics';
 
 const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
-  const { setId, setUser, id } = useUser();
+  const { setId, setUser, id, homeData } = useUser();
+
   const [input, setInput] = useState({
     email: '',
     password: '',
@@ -82,7 +83,7 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
     (async () => {
       setTimeout(() => setMsg({ ...msg, msg: '' }), 5000);
       if (msg.status) {
-        navigation.navigate('Home', route.params);
+        navigation.navigate('Home', homeData);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,6 +119,7 @@ const Auth = ({ route, navigation }: { route: any; navigation: any }) => {
               login: true,
             }),
           );
+          setTimeout(() => navigation.navigate('Home', homeData), 2000);
         }
       }
     }

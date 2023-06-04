@@ -38,7 +38,7 @@ const Transactions = ({ navigation }: ScreenProps) => {
 
   const [printer, setPrinters] = useState({
     show: false,
-    printers: [],
+    printers: [pSchema],
     curr: {},
   });
 
@@ -55,12 +55,6 @@ const Transactions = ({ navigation }: ScreenProps) => {
   // printer permission and setting
   useEffect(() => {
     (async () => {
-      await PermissionsAndroid.requestMultiple([
-        'android.permission.BLUETOOTH_CONNECT',
-        'android.permission.BLUETOOTH_SCAN',
-        'android.permission.BLUETOOTH_ADVERTISE',
-      ]);
-
       BLEPrinter.init().then(() => {
         BLEPrinter.getDeviceList()
           .then(printers => setPrinters({ ...printer, printers }))
@@ -152,11 +146,13 @@ const Transactions = ({ navigation }: ScreenProps) => {
   };
 
   const BlueSelect = () => {
+    // const []
     const print = (item: PrinterObj) => {
       let toPrint = details.data.receipt;
       BLEPrinter.connectPrinter(item.inner_mac_address);
       BLEPrinter.printBill(toPrint);
-      // setPrinters({ ...printer, show: false, curr: item })
+
+      setPrinters({ ...printer, show: false, curr: item });
     };
     const List = ({ item }: { item: PrinterObj }) => (
       <TouchableRipple rippleColor={other + 99} onPress={() => print(item)}>
