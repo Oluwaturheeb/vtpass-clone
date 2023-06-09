@@ -375,10 +375,14 @@ export interface BillerInfo {
   loading: boolean;
   code: string;
   content: {
-    customer_name?: string;
-    name?: string;
-    due_date?: string;
-    amount?: number;
+    Status: string;
+    Due_Date: string;
+    Customer_Number: string;
+    Customer_Name: string;
+    Customer_Type: string;
+    Current_Bouquet: string;
+    Current_Bouquet_Code: string;
+    Renewal_Amount: string;
     error?: string;
   };
 }

@@ -22,7 +22,7 @@ import {
   selectContactPhone,
   ContactPhoneSelection,
 } from 'react-native-select-contact';
-import { getTvInfo, initTrans } from './lib/requests';
+import { getTvInfo, initTrans, merchantVerify } from './lib/requests';
 import { useUser } from './lib/context';
 import { money } from './lib/axios';
 import { BShit, Loader } from './Components';
@@ -108,30 +108,48 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
       if (form.unique_element.length > 9) {
         setUserInfo({ ...billerInfo, loading: true });
         if (param.selectedItem.serviceID.includes('tv')) {
-          let tv = await getTvInfo(
-            param.selectedItem.serviceID,
-            form.unique_element,
-          );
+          let tv = await merchantVerify({
+            service: param.selectedItem.serviceID,
+            code: form.unique_element,
+          });
 
-          if (tv.content?.error) {
-            console.log(tv);
+          if (tv.data?.error) {
             return setError({
               ...error,
               main: true,
               biller: true,
-              msg: { ...error.msg, biller: tv.content?.error },
+              msg: { ...error.msg, biller: tv.data?.error },
             });
           } else {
-            return setUserInfo({ ...tv, loading: false });
+            return setUserInfo({
+              ...userInfo,
+              content: tv.data,
+              loading: false,
+            });
           }
         } else if (param.selectedItem.serviceID.includes('elect')) {
+          setUserInfo({ ...billerInfo, loading: true });
           if (form.unique_element.length > 11) {
-            let tt = await initTrans(param.selectedItem.product_id, {
-              ...form,
-              identifier: param.selectedVar?.identifier,
-              customer_id: id?.id,
+            let tt = await merchantVerify({
+              service: param.selectedItem.serviceID,
+              code: form.unique_element,
+              type: param.selectedVar.variation,
             });
-            console.log(tt);
+
+            if (tt.data.error) {
+              return setError({
+                ...error,
+                main: true,
+                biller: true,
+                msg: { ...error.msg, biller: tt.data?.error },
+              });
+            } else {
+              return setUserInfo({
+                ...userInfo,
+                content: tt.data,
+                loading: false,
+              });
+            }
           }
         }
       }
@@ -187,22 +205,24 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                       Customer Name
                     </Text>
                     <Text variant="bodySmall">
-                      {userInfo.content.customer_name}
+                      {userInfo.content.Customer_Name}
                     </Text>
                     <Text
                       variant="bodyLarge"
                       style={{ fontWeight: 'bold', color: pry }}>
                       Current Bouquet
                     </Text>
-                    <Text variant="bodySmall">{userInfo.content.name}</Text>
+                    <Text variant="bodySmall">
+                      {userInfo.content.Current_Bouquet_Code}
+                    </Text>
                     <Text
                       variant="bodyLarge"
                       style={{ fontWeight: 'bold', color: pry }}>
                       Due Date
                     </Text>
                     <Text variant="bodySmall">
-                      {userInfo.content.due_date
-                        ? userInfo.content.due_date
+                      {userInfo.content.Due_Date
+                        ? userInfo.content.Due_Date
                         : 'N/A'}
                     </Text>
                   </View>
@@ -329,7 +349,9 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
             />
           }
           data={data.key == '' ? data.variation : data.filter}
-          renderItem={({ item }) => <VariationList item={item} />}
+          renderItem={({ item }: { item: any }) => (
+            <VariationList item={item} />
+          )}
           contentContainerStyle={{ padding: 10 }}
           showsVerticalScrollIndicator={false}
           scrollEnabled={true}
@@ -422,6 +444,8 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
           ...param,
           trans,
         });
+      } else {
+        console.log(trans);
       }
     }
     setBtn(false);
@@ -522,7 +546,7 @@ const Details = ({ route, navigation }: { navigation: any; route: any }) => {
                         }}
                       />
                     </View>
-                    {userInfo.content.name != '' && (
+                    {userInfo.content.error != '' && (
                       <View>
                         <TouchableRipple
                           style={[error.main ? css.borderError : css.boxBorder]}

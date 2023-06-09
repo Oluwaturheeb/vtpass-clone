@@ -38,6 +38,7 @@ const TransactionDetails = ({
   let balanceCheck =
     Number(content.amount) + Number(content.convinience_fee) >
     Number(getUser?.customer?.wallet);
+  console.log(mobile_payment_setting_type);
 
   const ref: any = useRef();
   const snapPoints = useMemo(() => ['50%', '60%', '70%', '80%', '95%'], []);
@@ -149,54 +150,55 @@ const TransactionDetails = ({
                   style={{ padding: 10 }}
                   ref={ref}
                   index={0}>
-                  {mobile_payment_setting_type && (
-                    <View>
-                      {card_option && (
-                        <Button
-                          mode="text"
-                          textColor={other}
-                          style={{ borderRadius: 0 }}
-                          labelStyle={{ textAlign: 'center' }}
-                          icon="credit-card"
-                          onPress={() => setPay('card')}>
-                          Pay with Card
-                        </Button>
-                      )}
-                      {card_option_interswitch && (
-                        <Button
-                          mode="text"
-                          textColor={other}
-                          style={{ borderRadius: 0 }}
-                          labelStyle={{ textAlign: 'center' }}
-                          icon="wallet"
-                          onPress={async () => {}}>
-                          Pay with InterSwitch
-                        </Button>
-                      )}
-                      {ussd_option_dynamic && (
-                        <Button
-                          mode="text"
-                          textColor={other}
-                          style={{ borderRadius: 0 }}
-                          labelStyle={{ textAlign: 'center' }}
-                          icon="pound"
-                          onPress={() => setPay('card')}>
-                          Pay with USSD
-                        </Button>
-                      )}
-                      {bank_transfer_option_dynamic && (
-                        <Button
-                          mode="text"
-                          textColor={other}
-                          style={{ borderRadius: 0 }}
-                          labelStyle={{ textAlign: 'center' }}
-                          icon="bank-transfer"
-                          onPress={() => setPay('card')}>
-                          Pay with Bank Transfer
-                        </Button>
-                      )}
-                    </View>
-                  )}
+                  {mobile_payment_setting_type != '' ||
+                    (mobile_payment_setting_type == undefined && (
+                      <View>
+                        {card_option && (
+                          <Button
+                            mode="text"
+                            textColor={other}
+                            style={{ borderRadius: 0 }}
+                            labelStyle={{ textAlign: 'center' }}
+                            icon="credit-card"
+                            onPress={() => setPay('card')}>
+                            Pay with Card
+                          </Button>
+                        )}
+                        {card_option_interswitch && (
+                          <Button
+                            mode="text"
+                            textColor={other}
+                            style={{ borderRadius: 0 }}
+                            labelStyle={{ textAlign: 'center' }}
+                            icon="wallet"
+                            onPress={async () => {}}>
+                            Pay with InterSwitch
+                          </Button>
+                        )}
+                        {ussd_option_dynamic && (
+                          <Button
+                            mode="text"
+                            textColor={other}
+                            style={{ borderRadius: 0 }}
+                            labelStyle={{ textAlign: 'center' }}
+                            icon="pound"
+                            onPress={() => setPay('card')}>
+                            Pay with USSD
+                          </Button>
+                        )}
+                        {bank_transfer_option_dynamic && (
+                          <Button
+                            mode="text"
+                            textColor={other}
+                            style={{ borderRadius: 0 }}
+                            labelStyle={{ textAlign: 'center' }}
+                            icon="bank-transfer"
+                            onPress={() => setPay('card')}>
+                            Pay with Bank Transfer
+                          </Button>
+                        )}
+                      </View>
+                    ))}
                   {!card_option && (
                     <View>
                       <Button
@@ -209,7 +211,7 @@ const TransactionDetails = ({
                         onPress={async () => {
                           setBtn(true);
                           let pay = await walletPay(content.transactionId);
-                          console.log(JSON.stringify(pay, '', 2))
+                          console.log(JSON.stringify(pay, '', 2));
                           if (pay.status) {
                             navigation.navigate('Status', pay);
                           }

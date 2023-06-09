@@ -545,4 +545,4 @@ let codePushConfig = {
   },
 };
 
-export default __DEV__ ? App : CodePush(codePushConfig)(App);
+export default !__DEV__ ? App : CodePush(codePushConfig)(App);

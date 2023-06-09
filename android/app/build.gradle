@@ -101,6 +101,7 @@ android {
 
     namespace "com.vtpass"
     defaultConfig {
+        resValue 'string', "CODE_PUSH_APK_BUILD_TIME", String.format("\"%d\"", System.currentTimeMillis())
         applicationId "com.vtpass"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion

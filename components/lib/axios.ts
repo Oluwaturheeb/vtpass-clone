@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-let baseURL = 'https://www.qtplanet.com/mobile-api/v1';
+let baseURL = 'http://localhost:8080/mobile-api/v1';
 axios.defaults.baseURL = baseURL;
 axios.defaults.params = {};
 axios.defaults.params['platform'] = 'mobile';

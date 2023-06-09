@@ -174,3 +174,18 @@ export const findToken = async (body: object) => {
   let res = await request.post('/find-my-token', body);
   return res.data;
 };
+
+export const loadWallet = async (amount: any) => {
+  let res = await request.post('/initiate-wallet-load', { amount: amount });
+  return res.data;
+};
+
+export const merchantVerify = async (params: object) => {
+  let base = request.defaults.baseURL;
+  base = base?.substring(-1, base.length - 13);
+  let req = await request.get(base + 'ajax/merchant-verify', {
+    params: params,
+  });
+
+  return req.data;
+}

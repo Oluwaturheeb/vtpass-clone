@@ -319,10 +319,14 @@ export const billerInfo: BillerInfo = {
   loading: false,
   code: '',
   content: {
-    customer_name: '',
-    name: '',
-    due_date: '',
-    amount: 0,
+    Customer_Name: '',
+    Status: '',
+    Due_Date: '',
+    Customer_Number: '',
+    Customer_Type: '',
+    Current_Bouquet: '',
+    Current_Bouquet_Code: '',
+    Renewal_Amount: '',
     error: '',
   },
 };
